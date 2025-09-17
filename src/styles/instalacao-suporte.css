@@ -1,0 +1,189 @@
+/* =========================================================
+   INSTALACAO-SUPORTE.CSS - TEMA PADRÃO (ALINHADO COM STYLES.CSS)
+   ========================================================= */
+
+/* NOTA: Os estilos de body, fontes e variáveis de cor são 
+  automaticamente herdados do seu arquivo principal styles.css.
+  Não é necessário declará-los novamente aqui.
+*/
+
+/* 1. SEÇÃO HERO (CABEÇALHO DA PÁGINA)
+   --------------------------------------------------------- */
+   .support-hero {
+    padding: 80px 20px;
+    text-align: center;
+    background-color: var(--light);
+    max-width: 1200px;
+    margin: 100px auto 80px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+  }
+  
+  .support-hero-content h1 {
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
+    font-weight: 700;
+    margin: 0 0 20px;
+    line-height: 1.2;
+    /* Efeito de gradiente no texto, igual ao styles.css */
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .support-hero-content p {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+  
+  /* 2. SEÇÃO DE DETALHES (LINHA DO TEMPO)
+     --------------------------------------------------------- */
+  .support-details {
+    padding: 0 20px; /* Reduzido o padding vertical, já que as seções têm margem */
+  }
+  
+  .timeline-container {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  /* Linha vertical da linha do tempo */
+  .timeline-container::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: calc(100% - 40px);
+    background-color: #e9ecef; /* Cinza claro para a linha */
+    border-radius: 3px;
+  }
+  
+  .process-step {
+    display: flex;
+    position: relative;
+    margin-bottom: 50px;
+    width: 50%;
+    opacity: 0; /* Para animação de entrada */
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    transition-delay: 0.2s;
+  }
+  
+  /* Classe adicionada via JavaScript para animar */
+  .process-step.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Alinhamento alternado dos passos */
+  .process-step:nth-child(odd) {
+    left: 0;
+    padding-right: 50px;
+    justify-content: flex-end;
+    text-align: right;
+    flex-direction: row-reverse;
+  }
+  
+  .process-step:nth-child(even) {
+    left: 50%;
+    padding-left: 50px;
+  }
+  
+  /* Círculo na linha do tempo */
+  .process-step::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    top: 1.5rem;
+    background: white;
+    border: 4px solid var(--primary);
+    border-radius: 50%;
+    z-index: 1;
+    /* Sombra para destacar o círculo da linha */
+    box-shadow: 0 0 0 4px white;
+  }
+  
+  .process-step:nth-child(odd)::after {
+    right: -11px;
+  }
+  
+  .process-step:nth-child(even)::after {
+    left: -11px;
+  }
+  
+  .step-icon {
+    font-size: 2.5rem;
+    color: var(--success); /* Cor 'success' do tema principal */
+    margin: 0 20px;
+    min-width: 50px;
+    text-align: center;
+  }
+  
+  /* Estilo do card de cada passo */
+  .step-content {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 30px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    position: relative;
+    top: 0;
+  }
+  
+  .step-content:hover {
+    top: -8px; /* Efeito de elevação suave */
+    box-shadow: var(--shadow-hover);
+  }
+  
+  .step-content h2 {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+    color: var(--primary); /* Cor primária para o título */
+  }
+  
+  .step-content p {
+    font-size: 1rem;
+    color: var(--text-light); /* Cor de texto secundária */
+    line-height: 1.6;
+  }
+  
+  /* 3. RESPONSIVIDADE
+     --------------------------------------------------------- */
+  @media (max-width: 768px) {
+    .support-hero {
+      margin: 80px auto 60px;
+      padding: 60px 20px;
+    }
+    .support-hero-content h1 {
+      font-size: 2.5rem;
+    }
+    
+    .timeline-container::before {
+      left: 20px; /* Alinha a linha à esquerda em telas menores */
+    }
+    
+    .process-step,
+    .process-step:nth-child(even),
+    .process-step:nth-child(odd) {
+      width: 100%;
+      left: 0;
+      padding-left: 60px; /* Espaço para a linha e o círculo */
+      padding-right: 0;
+      text-align: left;
+      flex-direction: row;
+      justify-content: flex-start;
+    }
+    
+    .process-step::after,
+    .process-step:nth-child(odd)::after,
+    .process-step:nth-child(even)::after {
+      left: 9px; /* Posiciona o círculo na linha da esquerda */
+    }
+  }

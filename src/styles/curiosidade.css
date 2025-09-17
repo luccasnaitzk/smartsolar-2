@@ -1,0 +1,45 @@
+body {
+    background-color: #f4f7f6;
+}
+
+.curiosity-hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1618193237500-a42319741552?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
+    color: white;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+.curiosity-hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+}
+
+.curiosity-details {
+    padding: 60px 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.fact-card {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    background: white;
+    padding: 25px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 25px;
+}
+
+.fact-icon {
+    font-size: 2.5rem;
+    color: var(--primary);
+}
+
+.fact-text h3 {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+}

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SMARTSOLAR</title>
+  <meta name="description" content="Projetos e monitoramento de energia solar com foco em eficiência, economia e sustentabilidade.">
+  <link rel="shortcut icon" href="src/images/smartlogo.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/styles/styles.css">
+  <link rel="stylesheet" href="src/styles/header.css">
+  <link rel="stylesheet" href="src/styles/auth.css">
+</head>
+<body>
+  <div class="particles-container">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
+  <header class="site-header">
+    <nav id="navbar" aria-label="Principal">
+      <a href="#home" class="brand" aria-label="Página inicial">
+        <img src="src/images/smartlogo.png" alt="SmartSolar Logo" class="brand-logo">
+        <span>SMARTSOLAR</span>
+      </a>
+      <button class="nav-toggle" aria-controls="nav_list" aria-expanded="false">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul id="nav_list" class="nav-list">
+        <li class="nav_item"><a href="#home">Início</a></li>
+        <li class="nav_item"><a href="#services">Serviços</a></li>
+        <li class="nav_item">
+          <a href="#sobre">Sobre <i class="fas fa-chevron-down" style="font-size: 0.8rem; margin-left: 5px;"></i></a>
+          <div class="submenu">
+            <a href="#sobre">Sobre Nós</a>
+            <a href="#depoimentos">Depoimentos</a>
+          </div>
+        </li>
+        <li class="nav_item"><a href="#contato">Contato</a></li>
+        <li class="nav_item auth-item">
+          <button class="login-btn" id="authBtn">
+            <i class="fas fa-user"></i>
+            <span>Entrar</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="auth-modal" id="authModal">
+    <div class="auth-container">
+      <div class="auth-header">
+        <h2>Acesse sua conta</h2>
+        <button class="auth-close" id="closeAuthModal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="auth-tabs">
+        <div class="auth-tab active" data-tab="login">Entrar</div>
+        <div class="auth-tab" data-tab="register">Cadastrar</div>
+      </div>
+      <div class="auth-content">
+        <form class="auth-form active" id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail">E-mail</label>
+            <input type="email" id="loginEmail" placeholder="Seu e-mail" required>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Senha</label>
+            <input type="password" id="loginPassword" placeholder="Sua senha" required>
+          </div>
+          <div class="form-options">
+            <label class="checkbox">
+              <input type="checkbox" id="rememberMe">
+              <span>Lembrar-me</span>
+            </label>
+            <a href="#" class="forgot-password" id="forgotPassword">Esqueci a senha</a>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Entrar</button>
+        </form>
+
+        <form class="auth-form" id="registerForm">
+          <div class="form-group">
+            <label for="registerName">Nome completo</label>
+            <input type="text" id="registerName" placeholder="Seu nome completo" required>
+          </div>
+          <div class="form-group">
+            <label for="registerEmail">E-mail</label>
+            <input type="email" id="registerEmail" placeholder="Seu e-mail" required>
+          </div>
+          <div class="form-group">
+            <label for="registerPassword">Senha</label>
+            <input type="password" id="registerPassword" placeholder="Crie uma senha" required>
+          </div>
+          <div class="form-group">
+            <label for="registerConfirmPassword">Confirmar senha</label>
+            <input type="password" id="registerConfirmPassword" placeholder="Confirme sua senha" required>
+          </div>
+          <div class="form-options">
+            <label class="checkbox">
+              <input type="checkbox" id="acceptTerms" required>
+              <span>Concordo com os <a href="#">termos de uso</a></span>
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Criar conta</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <main id="home">
+    <section class="hero">
+      <div class="hero-slider">
+        <div class="slide active">
+          <div class="hero-content">
+            <h1>Energia solar inteligente para sua casa ou empresa</h1>
+            <p>A proposta é oferecer uma interface simples e intuitiva, que permita ao usuário acompanhar o desempenho de seus painéis solares e gerar relatórios que auxiliem na economia de energia, redução de costos e no uso sustentável da energia limpa.</p>
+            <a href="#contato" class="btn">Solicitar Orçamento</a>
+          </div>
+          <figure class="hero-media">
+            <img src="src/images/special.jpg" alt="Painéis solares sob céu azul">
+          </figure>
+        </div>
+        <div class="slide">
+          <div class="hero-content">
+            <h1>Economize até 95% na sua conta de luz</h1>
+            <p>Com nossos sistemas de energia solar, você reduz drasticamente seus custos com energia elétrica enquanto contribui para um planeta mais sustentável.</p>
+            <a href="#contato" class="btn">Simular Economia</a>
+          </div>
+          <figure class="hero-media">
+            <img src="src/images/economia.png" alt="Gráfico mostrando economia com energia solar">
+          </figure>
+        </div>
+        <div class="slide">
+          <div class="hero-content">
+            <h1>Monitoramento em tempo real</h1>
+            <p>Acompanhe a produção de energia do seu sistema fotovoltaico de qualquer lugar, a qualquer momento, através do nosso aplicativo exclusivo.</p>
+            <a href="#services" class="btn">Conhecer Serviços</a>
+          </div>
+          <figure class="hero-media">
+            <img src="src/images/monitoramento.png" alt="Aplicativo de monitoramento de energia solar">
+          </figure>
+        </div>
+      </div>
+      <div class="slider-controls">
+        <button class="slider-prev"><i class="fas fa-chevron-left"></i></button>
+        <div class="slider-dots"></div>
+        <button class="slider-next"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <section id="services" class="section">
+      <header class="section-header">
+        <h2>Serviços</h2>
+        <p>Do projeto ao monitoramento em tempo real, oferecemos soluções completas.</p>
+      </header>
+      <div class="cards">
+        <article class="card">
+          <div class="card-image">
+            <img src="src/images/easy.jpg" alt="Projeto de sistema">
+            <div class="card-overlay">
+              <a href="projeto-smartsolar.html" class="card-btn">Ver detalhes</a>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>Projeto SmartSolar</h3>
+            <p>O SmartSolar é um projeto que tem como foco o desenvolvimento de um sistema de monitoramento, em tempo real, da geração e do consumo de energia solar.</p>
+            <div class="card-details">
+              <ul>
+                <li><i class="fas fa-check-circle"></i> Dimensionamento preciso</li>
+                <li><i class="fas fa-check-circle"></i> Análise de viabilidade</li>
+                <li><i class="fas fa-check-circle"></i> Projeto personalizado</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-image">
+            <img src="src/images/interface.png" alt="Monitoramento em tempo real de energia">
+            <div class="card-overlay">
+              <a href="monitoramento-inteligente.html" class="card-btn">Ver detalhes</a>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>Monitoramento Inteligente</h3>
+            <p>Acompanhe geração e consumo em tempo real e receba alertas de performance.</p>
+            <div class="card-details">
+              <ul>
+                <li><i class="fas fa-check-circle"></i> Dados em tempo real</li>
+                <li><i class="fas fa-check-circle"></i> Relatórios personalizados</li>
+                <li><i class="fas fa-check-circle"></i> Alertas de desempenho</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-image">
+            <img src="src/images/eco.jpg" alt="Energia ecológica">
+            <div class="card-overlay">
+              <a href="instalacao-suporte.html" class="card-btn">Ver detalhes</a>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>Instalação & Suporte</h3>
+            <p>Equipe especializada, instalações seguras e manutenção programada.</p>
+            <div class="card-details">
+              <ul>
+                <li><i class="fas fa-check-circle"></i> Instalação profissional</li>
+                <li><i class="fas fa-check-circle"></i> Manutenção preventiva</li>
+                <li><i class="fas fa-check-circle"></i> Suporte técnico 24/7</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="sobre" class="section about">
+      <div class="about-media">
+        <img src="src/images/renew.jpg" alt="Energia limpa e renovável">
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-number" data-count="500">0</span>
+            <span class="stat-label">Projetos Concluídos</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number" data-count="12000">0</span>
+            <span class="stat-label">Toneladas de CO² Evitadas</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number" data-count="98">0</span>
+            <span class="stat-label">Clientes Satisfeitos</span>
+          </div>
+        </div>
+      </div>
+      <div class="about-content">
+        <h2>Curiosidade</h2>
+        <p>O Smart Solar é um sistema para monitoramento e gestão da energia solar em casas e comércios. Ele coleta dados da geração e do consumo de energia, calcula automaticamente o saldo (sobra ou falta) e mostra a economia em reais.</p>
+        <br>
+        <p>Algumas das funcionalidades:</p>
+        <ul class="bullets">
+          <li>Alertas sobre desempenho e consumo</li>
+          <li>Monitoramento em tempo real com relatórios claros</li>
+          <li>Segurança dos dados</li>
+        </ul>
+        <a href="curiosidade.html" class="btn btn-outline">Saiba mais</a>
+      </div>
+    </section>
+
+    <section id="depoimentos" class="section testimonials">
+      <header class="section-header">
+        <h2>O que nossos clientes dizem</h2>
+        <p>Confira as experiências de quem já adotou a energia solar conosco</p>
+      </header>
+      <div class="testimonial-slider">
+        <div class="testimonial active">
+          <div class="testimonial-content">
+            <div class="rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p>"Minha conta de energia caiu 90% após a instalação do sistema. O retorno do investimento foi mais rápido do que imaginei!"</p>
+            <div class="client">
+              <img src="src/images/client1.jpg" alt="Cliente Roberto Silva">
+              <div class="client-info">
+                <h4>Roberto Silva</h4>
+                <span>Residencial - São Paulo/SP</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial">
+          <div class="testimonial-content">
+            <div class="rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star-half-alt"></i>
+            </div>
+            <p>"O aplicativo de monitoramento é incrível. Consigo acompanhar toda a produção de energia do meu comércio pelo celular."</p>
+            <div class="client">
+              <img src="src/images/client2.jpg" alt="Cliente Maria Oliveira">
+              <div class="client-info">
+                <h4>Maria Oliveira</h4>
+                <span>Comercial - Rio Claro/SP</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial">
+          <div class="testimonial-content">
+            <div class="rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p>"A equipe de instalação foi extremamente profissional e o suporte pós-venda é excepcional. Recomendo a todos!"</p>
+            <div class="client">
+              <img src="src/images/client3.jpg" alt="Cliente João Santos">
+              <div class="client-info">
+                <h4>João Santos</h4>
+                <span>Industrial - Araras/SP</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-controls">
+        <button class="testimonial-prev"><i class="fas fa-chevron-left"></i></button>
+        <div class="testimonial-dots"></div>
+        <button class="testimonial-next"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <section id="contato" class="section contact">
+      <header class="section-header">
+        <h2>Entre em Contato</h2>
+        <p>Estamos prontos para levar energia solar inteligente para seu negócio ou residência</p>
+      </header>
+      <div class="contact-container">
+        <form class="contact-form" id="contactForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="contactName">Nome completo</label>
+              <input type="text" id="contactName" placeholder="Seu nome completo" required>
+            </div>
+            <div class="form-group">
+              <label for="contactEmail">E-mail</label>
+              <input type="email" id="contactEmail" placeholder="Seu e-mail" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="contactPhone">Telefone</label>
+              <input type="tel" id="contactPhone" placeholder="Seu telefone" required>
+            </div>
+            <div class="form-group">
+              <label for="contactSubject">Assunto</label>
+              <select id="contactSubject" required>
+                <option value="">Selecione um assunto</option>
+                <option value="orcamento">Solicitar orçamento</option>
+                <option value="duvidas">Tirar dúvidas</option>
+                <option value="suporte">Suporte técnico</option>
+                <option value="outros">Outros</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="contactMessage">Mensagem</label>
+            <textarea id="contactMessage" rows="5" placeholder="Sua mensagem" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Enviar mensagem</button>
+        </form>
+        <div class="contact-info">
+          <h3>Nossos contatos</h3>
+          <div class="contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>FHO, 1000, Araras - SP</span>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <span>(19) 99999-9999</span>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <span>contato@smartsolar.com.br</span>
+          </div>
+          <div class="social-links">
+            <a href="#" aria-label="WhatsApp">
+              <i class="fab fa-whatsapp"></i>
+            </a>
+            <a href="#" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" aria-label="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" aria-label="LinkedIn">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>SMARTSOLAR</h3>
+        <p>Energia inteligente para um futuro sustentável.</p>
+      </div>
+      <div class="footer-section">
+        <h4>Links Rápidos</h4>
+        <ul>
+          <li><a href="#home">Início</a></li>
+          <li><a href="#services">Serviços</a></li>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Serviços</h4>
+        <ul>
+          <li><a href="projeto-smartsolar.html">Projetos</a></li>
+          <li><a href="instalacao-suporte.html">Instalação</a></li>
+          <li><a href="monitoramento-inteligente.html">Monitoramento</a></li>
+          <li><a href="instalacao-suporte.html">Manutenção</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Novidades</h4>
+        <p>Inscreva-se para receber nossas novidades</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Seu e-mail" required>
+          <button type="submit"><i class="fas fa-paper-plane"></i></button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <small>© 2025 SMARTSOLAR, Hexadevs. Todos os direitos reservados.</small>
+    </div>
+  </footer>
+
+  <script src="src/scripts/script.js"></script>
+  <script src="src/scripts/auth.js"></script>
+</body>
+</html>

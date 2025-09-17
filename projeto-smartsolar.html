@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Projeto SmartSolar - SMARTSOLAR</title>
+  <link rel="shortcut icon" href="src/images/smartlogo.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/styles/styles.css">
+  <link rel="stylesheet" href="src/styles/header.css">
+  <link rel="stylesheet" href="src/styles/projeto-smartsolar.css">
+  <link rel="stylesheet" href="src/styles/botaovoltar.css">
+  <link rel="stylesheet" href="src/styles/auth.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav id="navbar" aria-label="Principal">
+      <a href="index.html" class="brand" aria-label="Página inicial">
+        <img src="src/images/smartlogo.png" alt="SmartSolar Logo" class="brand-logo">
+        <span>SMARTSOLAR</span>
+      </a>
+      <button class="nav-toggle" aria-controls="nav_list" aria-expanded="false">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul id="nav_list" class="nav-list">
+        <li class="nav_item"><a href="index.html#home">Início</a></li>
+        <li class="nav_item"><a href="index.html#services">Serviços</a></li>
+        <li class="nav_item"><a href="index.html#sobre">Sobre</a></li>
+        <li class="nav_item"><a href="index.html#contato">Contato</a></li>
+        <li class="nav_item auth-item">
+          <button class="login-btn" id="authBtn">
+            <i class="fas fa-user"></i>
+            <span>Entrar</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="auth-modal" id="authModal">
+    <div class="auth-container">
+      <div class="auth-header">
+        <h2>Acesse sua conta</h2>
+        <button class="auth-close" id="closeAuthModal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="auth-tabs">
+        <div class="auth-tab active" data-tab="login">Entrar</div>
+        <div class="auth-tab" data-tab="register">Cadastrar</div>
+      </div>
+      <div class="auth-content">
+        <form class="auth-form active" id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail">E-mail</label>
+            <input type="email" id="loginEmail" placeholder="Seu e-mail" required>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Senha</label>
+            <input type="password" id="loginPassword" placeholder="Sua senha" required>
+          </div>
+          <div class="form-options">
+            <label class="checkbox">
+              <input type="checkbox" id="rememberMe">
+              <span>Lembrar-me</span>
+            </label>
+            <a href="#" class="forgot-password" id="forgotPassword">Esqueci a senha</a>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Entrar</button>
+        </form>
+        <form class="auth-form" id="registerForm">
+          <div class="form-group">
+            <label for="registerName">Nome completo</label>
+            <input type="text" id="registerName" placeholder="Seu nome completo" required>
+          </div>
+          <div class="form-group">
+            <label for="registerEmail">E-mail</label>
+            <input type="email" id="registerEmail" placeholder="Seu e-mail" required>
+          </div>
+          <div class="form-group">
+            <label for="registerPassword">Senha</label>
+            <input type="password" id="registerPassword" placeholder="Crie uma senha" required>
+          </div>
+          <div class="form-group">
+            <label for="registerConfirmPassword">Confirmar senha</label>
+            <input type="password" id="registerConfirmPassword" placeholder="Confirme sua senha" required>
+          </div>
+          <div class="form-options">
+            <label class="checkbox">
+              <input type="checkbox" id="acceptTerms" required>
+              <span>Concordo com os <a href="#">termos de uso</a></span>
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Criar conta</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section class="project-hero">
+      <div class="project-hero-content">
+        <h1>Projeto SmartSolar</h1>
+        <p>A Vanguarda da Energia Solar Residencial e Empresarial</p>
+      </div>
+    </section>
+
+    <section class="project-details">
+      <div class="container">
+        <h2>Nossa Missão</h2>
+        <p>O Projeto SmartSolar nasceu com a missão de revolucionar o setor de energia solar, tornando-o mais acessível, eficiente e inteligente. Combinamos a mais alta tecnologia em painéis fotovoltaicos com um sistema de monitoramento em tempo real, garantindo que você tenha total controle sobre sua produção e consumo de energia.</p>
+
+        <div class="features-grid">
+          <div class="feature-item">
+            <i class="fas fa-cogs"></i>
+            <h3>Tecnologia de Ponta</h3>
+            <p>Utilizamos painéis solares com a mais alta taxa de eficiência do mercado, inversores inteligentes e uma plataforma de software que otimiza a geração de energia com base em previsões climáticas e padrões de consumo.</p>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-chart-line"></i>
+            <h3>Análise Preditiva</h3>
+            <p>Nosso sistema utiliza algoritmos de machine learning para prever a produção de energia e o consumo da sua residência ou empresa, permitindo um planejamento financeiro mais preciso e a identificação de oportunidades de economia.</p>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-leaf"></i>
+            <h3>Sustentabilidade</h3>
+            <p>Cada projeto é pensado para maximizar a redução da pegada de carbono. Ao escolher a SmartSolar, você não só economiza na conta de luz, mas também contribui ativamente para um futuro mais verde e sustentável.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="voltar-container">
+      <a href="index.html" class="btn">
+        <i class="fas fa-arrow-left"></i> Voltar para o Início
+      </a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>SMARTSOLAR</h3>
+            <p>Energia inteligente para um futuro sustentável.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Links Rápidos</h4>
+            <ul>
+                <li><a href="index.html#home">Início</a></li>
+                <li><a href="index.html#services">Serviços</a></li>
+                <li><a href="index.html#sobre">Sobre</a></li>
+                <li><a href="index.html#contato">Contato</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <small>© 2025 SMARTSOLAR, Hexadevs. Todos os direitos reservados.</small>
+    </div>
+  </footer>
+
+  <script src="src/scripts/auth.js"></script>
+  
+</body>
+</html>

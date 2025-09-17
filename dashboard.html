@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartSolar - Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="src/styles/dashboard.css">
+</head>
+<body data-theme="dark">
+<div class="animated-bg">
+  <div class="animated-particles">
+    <div class="animated-particle p1"></div>
+    <div class="animated-particle p2"></div>
+    <div class="animated-particle p3"></div>
+    <div class="animated-particle p4"></div>
+    <div class="animated-particle p5"></div>
+  </div>
+</div>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h1><i class="fas fa-bolt"></i> SmartSolar</h1>
+    </div>
+    <div class="sidebar-menu">
+      <button class="tab active" data-section="dashboard">
+        <i class="fas fa-chart-line"></i> Dashboard
+      </button>
+      <button class="tab" data-section="monitoramento">
+        <i class="fas fa-desktop"></i> Monitoramento
+      </button>
+      <button class="tab" data-section="clima">
+        <i class="fas fa-cloud-sun"></i> Clima
+      </button>
+      <button class="tab" data-section="relatorios">
+        <i class="fas fa-file-alt"></i> Relatórios
+      </button>
+      <button class="tab" data-section="placas">
+        <i class="fas fa-solar-panel"></i> Placas
+      </button>
+      <button class="tab" data-section="alertas">
+        <i class="fas fa-bell"></i> Alertas
+      </button>
+      <button class="tab" data-section="configuracoes">
+        <i class="fas fa-cog"></i> Configurações
+      </button>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-menu" id="userMenu">
+        <img src="https://ui-avatars.com/api/?name=Usuario&background=00d4ff&color=fff" alt="Usuário">
+        <span>Usuário</span>
+      </div>
+    </div>
+    <footer style="width:100%; position:fixed; left:0; bottom:0; background:#1e1e2f; color:#00d4ff; text-align:center; padding:0.1rem 0 0 0; font-size:1.1rem; letter-spacing:0.5px; z-index:999;">
+      <span style="font-weight:600;">SmartSolar © <span id="year"></span> - Todos os direitos reservados</span>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const footer = document.querySelector('footer');
+          footer.style.display = 'none';
+          window.addEventListener('scroll', function() {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
+              footer.style.display = 'block';
+            } else {
+              footer.style.display = 'none';
+            }
+          });
+        });
+      </script>
+    </footer>
+    </div>
+  </div>
+
+  <!-- Conteúdo Principal -->
+  <div class="main-content">
+    <!-- Header -->
+    <header>
+      <div class="header-left">
+        <h2 id="pageTitle">Dashboard</h2>
+      </div>
+      <div class="header-right">
+        <div class="weather-info">
+          <i class="fas fa-cloud-sun" title="Clima"></i>
+          <span>28°C • <i class="fas fa-tint" title="Umidade"></i> 45%</span>
+        </div>
+        <button id="darkToggle" class="theme-toggle">🌙</button>
+        <button id="logoutBtn" class="logout-btn" title="Sair" style="margin-left:0.7rem; background:#e63946; color:#fff; border:none; border-radius:8px; padding:0.5rem 1.1rem; font-size:1rem; cursor:pointer; transition:background 0.2s;">
+          <i class="fas fa-sign-out-alt"></i> Sair
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- DASHBOARD -->
+      <section id="section-dashboard">
+        <div class="dashboard-header">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <h2>📊 Visão Geral do Sistema</h2>
+            <button id="toggleView" class="toggle-view-btn" title="Alternar para visão de placas">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+          <div id="placaMiniSelect" class="placa-mini-select" style="display:none; margin-top:1rem;"></div>
+          <div class="time-filter">
+            <button class="filter-btn active"><i class="fas fa-calendar-day"></i> Hoje</button>
+            <button class="filter-btn"><i class="fas fa-calendar-week"></i> Semana</button>
+            <button class="filter-btn"><i class="fas fa-calendar-alt"></i> Mês</button>
+          </div>
+        </div>
+
+        <!-- KPIs Principais -->
+        <div class="grid">
+          <div class="card kpi">
+            <div class="kpi-icon" style="background: rgba(0, 212, 255, 0.2);">
+              <i class="fas fa-sun" style="color: #00d4ff;"></i>
+            </div>
+            <div class="kpi-content">
+              <h3>Geração Atual</h3>
+              <p id="powerNow">0.0 kW</p>
+              <span class="kpi-trend up"><i class="fas fa-arrow-up"></i> 12%</span>
+            </div>
+          </div>
+          
+          <div class="card kpi">
+            <div class="kpi-icon" style="background: rgba(255, 204, 0, 0.2);">
+              <i class="fas fa-bolt" style="color: #ffcc00;"></i>
+            </div>
+            <div class="kpi-content">
+              <h3>Consumo Atual</h3>
+              <p id="loadNow">0.0 kW</p>
+              <span class="kpi-trend down"><i class="fas fa-arrow-down"></i> 5%</span>
+            </div>
+          </div>
+          
+          <div class="card kpi">
+            <div class="kpi-icon" style="background: rgba(67, 97, 238, 0.2);">
+              <i class="fas fa-plug" style="color: #4361ee;"></i>
+            </div>
+            <div class="kpi-content">
+              <h3>Energia Hoje</h3>
+              <p id="energyToday">0.0 kWh</p>
+              <span class="kpi-trend up"><i class="fas fa-arrow-up"></i> 8%</span>
+            </div>
+          </div>
+          
+          <div class="card kpi">
+            <div class="kpi-icon" style="background: rgba(42, 157, 143, 0.2);">
+              <i class="fas fa-dollar-sign" style="color: #2a9d8f;"></i>
+            </div>
+            <div class="kpi-content">
+              <h3>Economia Diária</h3>
+              <p id="revenueToday">R$ 0,00</p>
+              <span class="kpi-trend up"><i class="fas fa-arrow-up"></i> 15%</span>
+            </div>
+          </div>
+        </div>
+        <!-- Gráficos e Detalhes -->
+        <div class="grid large">
+          <div class="card">
+            <div class="card-header" style="display:flex; align-items:center; gap:1rem; justify-content:space-between; position:relative;">
+              <div style="display:flex; align-items:center; gap:0.7rem;">
+                <span class="potencia-icon" style="background:linear-gradient(135deg,#00d4ff 60%,#4361ee 100%); border-radius:50%; padding:0.7rem; box-shadow:0 2px 12px rgba(0,212,255,0.15);">
+                  <i class="fas fa-bolt" style="
+                    font-size:2.7rem;
+                    color:#fff;
+                    background: linear-gradient(135deg, #f8ffae 0%, #43c6ac 100%);
+                    border-radius: 50%;
+                    box-shadow: 0 4px 24px rgba(67,198,172,0.18);
+                    padding: 0.5rem;
+                    animation: energiaPulse 1.2s infinite alternate;
+                  "></i>
+                </span>
+                <h3 style="font-size:1.25rem; font-weight:600; color:#00d4ff; letter-spacing:0.5px;">Potência Instantânea</h3>
+              </div>
+              <span class="potencia-ao-vivo" title="Valor atualizado em tempo real">Ao vivo</span>
+            </div>
+            <div class="potencia-valor-container" style="display:flex; flex-direction:column; align-items:center; justify-content:center; margin-top:1.2rem;">
+              <span id="gaugeValue" class="gauge-potencia-value">
+                0.0 kW
+              </span>
+            </div>
+          </div>
+
+          
+          <div class="card">
+            <div class="card-header">
+              <h3>Geração vs Consumo</h3>
+              <div class="chart-container">
+                <canvas id="realtimeChart"></canvas>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h3>Detalhes de Performance</h3>
+              <div class="performance-details">
+                <div class="performance-item">
+                  <span class="performance-icon"><i class="fas fa-tachometer-alt"></i></span>
+                  <span class="performance-label">Eficiência do Sistema</span>
+                  <span class="performance-value" id="efficiency">0%</span>
+                </div>
+                <div class="performance-item">
+                  <span class="performance-icon"><i class="fas fa-leaf"></i></span>
+                  <span class="performance-label">CO₂ Evitado Hoje</span>
+                  <span class="performance-value" id="co2Saved">0 kg</span>
+                </div>
+                <div class="performance-item">
+                  <span class="performance-icon"><i class="fas fa-solar-panel"></i></span>
+                  <span class="performance-label">Placas Ativas</span>
+                  <span class="performance-value" id="totalPlacas">0</span>
+                </div>
+                <div class="performance-item">
+                  <span class="performance-icon"><i class="fas fa-bolt"></i></span>
+                  <span class="performance-label">Potência Total</span>
+                  <span class="performance-value" id="potenciaTotal">0 kWp</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+s
+        <!-- Informações Adicionais -->
+        <div class="grid" style="display: flex; gap: 2rem; align-items: stretch;">
+          <div class="card" style="flex: 1;">
+            <div class="card-header">
+              <h3>Produção Semanal</h3>
+              <div class="chart-container">
+                <canvas id="dailyBarChart" width="200" height="80"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="flex: 1;">
+            <div class="card-header">
+              <h3>Status das Placas</h3>
+              <div class="chart-container">
+                <canvas id="placaDoughnut"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MONITORAMENTO EM TEMPO REAL -->
+      <section id="section-monitoramento" hidden>
+        <h2>📡 Monitoramento em Tempo Real</h2>
+        <div class="grid large">
+          <div class="card">
+            <h3>Geração de Energia</h3>
+            <div class="chart-container">
+              <canvas id="monitoringChart"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Detalhes de Operação</h3>
+            <div class="performance-details">
+              <div class="performance-item">
+                <span class="performance-icon"><i class="fas fa-battery-full"></i></span>
+                <span class="performance-label">Tensão DC</span>
+                <span class="performance-value">320.5 V</span>
+              </div>
+              <div class="performance-item">
+                <span class="performance-icon"><i class="fas fa-bolt"></i></span>
+                <span class="performance-label">Corrente DC</span>
+                <span class="performance-value">15.8 A</span>
+              </div>
+              <div class="performance-item">
+                <span class="performance-icon"><i class="fas fa-plug"></i></span>
+                <span class="performance-label">Tensão AC</span>
+                <span class="performance-value">220.3 V</span>
+              </div>
+              <div class="performance-item">
+                <span class="performance-icon"><i class="fas fa-wave-square"></i></span>
+                <span class="performance-label">Frequência</span>
+                <span class="performance-value">60.0 Hz</span>
+              </div>
+              <div class="performance-item">
+                <span class="performance-icon"><i class="fas fa-thermometer-half"></i></span>
+                <span class="performance-label">Temperatura</span>
+                <span class="performance-value">42.5 °C</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CLIMA -->
+      <section id="section-clima" hidden>
+        <h2>🌤️ Condições Climáticas</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Previsão do Tempo</h3>
+            <div class="weather-card">
+              <div class="weather-current">
+                <div class="weather-icon">
+                  <i class="fas fa-sun"></i>
+                </div>
+                <div class="weather-details">
+                  <h4>Hoje</h4>
+                  <div class="temperature">28°C</div>
+                  <div class="condition">Ensolarado</div>
+                </div>
+              </div>
+              <div class="weather-stats">
+                <div class="weather-stat">
+                  <i class="fas fa-wind"></i>
+                  <span>15 km/h</span>
+                </div>
+                <div class="weather-stat">
+                  <i class="fas fa-tint"></i>
+                  <span>45%</span>
+                </div>
+                <div class="weather-stat">
+                  <i class="fas fa-compress-alt"></i>
+                  <span>1015 hPa</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <h3>Radiação Solar</h3>
+            <div class="chart-container">
+              <canvas id="solarRadiationChart"></canvas>
+            </div>
+          </div>
+          
+          <div class="card">
+            <h3>Previsão para Amanhã</h3>
+            <div class="weather-forecast">
+              <div class="forecast-item">
+                <div class="forecast-day">Amanhã</div>
+                <div class="forecast-icon">
+                  <i class="fas fa-cloud-sun"></i>
+                </div>
+                <div class="forecast-temp">26°C</div>
+              </div>
+              <div class="forecast-details">
+                <p>Parcialmente nublado com possibilidade de chuvas isoladas no final da tarde.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RELATÓRIOS -->
+      <section id="section-relatorios" hidden>
+        <h2>📑 Relatórios</h2>
+        <form id="reportForm">
+          <label>Início: <input type="date" id="dateStart" required></label>
+          <label>Fim: <input type="date" id="dateEnd" required></label>
+          <button type="submit" class="btn-primary">Gerar</button>
+        </form>
+        <div id="reportBox">
+          <table id="reportsTable">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Descrição</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Relatórios serão inseridos aqui via JS -->
+            </tbody>
+          </table>
+        </div>
+        <button id="exportCsv" class="btn-exportar"><i class="fas fa-file-export"></i> Exportar CSV</button>
+      </section>
+
+      <!-- PLACAS -->
+      <section id="section-placas" hidden>
+        <h2>🔋 Gerenciamento de Placas</h2>
+        <form id="placaForm">
+          <input type="text" id="placaNome" placeholder="Nome da placa" required>
+          <input type="number" id="placaPotencia" placeholder="Potência (kWp)" step="0.1" required>
+          <select id="placaStatus">
+            <option value="Ativa">Ativa</option>
+            <option value="Inativa">Inativa</option>
+            <option value="Manutenção">Manutenção</option>
+          </select>
+          <button type="submit">Cadastrar</button>
+        </form>
+        <table id="placaTable">
+          <thead>
+            <tr><th>Nome</th><th>Potência</th><th>Status</th><th>Ações</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- ALERTAS -->
+      <section id="section-alertas" hidden>
+        <h2>🚨 Alertas</h2>
+        <table id="alertsTable">
+          <thead>
+            <tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Nível</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+  <button id="clearAlerts" class="btn-limpar">🗑 Limpar</button>
+      </section>
+
+      <!-- CONFIGURAÇÕES -->
+      <section id="section-configuracoes" hidden>
+        <h2 style="margin-bottom:2rem;"><i class="fas fa-cogs"></i> Configurações</h2>
+        <div class="grid large">
+          <div class="card config-card">
+            <div class="card-header">
+              <h3><i class="fas fa-solar-panel"></i> Parâmetros da Usina</h3>
+            </div>
+            <div class="config-fields">
+              <div class="config-field">
+                <label for="plantCapacity"><i class="fas fa-battery-full"></i> Capacidade Total</label>
+                <input type="number" id="plantCapacity" value="8" min="0" step="0.1">
+                <span class="config-unit">kWp</span>
+              </div>
+              <div class="config-field">
+                <label for="tariff"><i class="fas fa-dollar-sign"></i> Tarifa</label>
+                <input type="number" id="tariff" value="0.95" step="0.01" min="0">
+                <span class="config-unit">R$/kWh</span>
+              </div>
+              <button id="saveSettings" class="btn-primary"><i class="fas fa-save"></i> Salvar</button>
+            </div>
+          </div>
+          <div class="card config-card">
+            <div class="card-header">
+              <h3><i class="fas fa-sliders-h"></i> Limites de Operação</h3>
+            </div>
+            <div class="config-fields">
+              <div class="config-field">
+                <label for="minGen"><i class="fas fa-arrow-down"></i> Mínimo Geração</label>
+                <input type="number" id="minGen" value="1" min="0" step="0.1">
+                <span class="config-unit">kW</span>
+              </div>
+              <div class="config-field">
+                <label for="maxDelta"><i class="fas fa-arrow-up"></i> Delta Máximo</label>
+                <input type="number" id="maxDelta" value="3" min="0" step="0.1">
+                <span class="config-unit">kW</span>
+              </div>
+              <button id="saveThresholds" class="btn-primary"><i class="fas fa-save"></i> Salvar Limites</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <footer style="width:100%; position:fixed; left:0; bottom:0; background:#1e1e2f; color:#00d4ff; text-align:center; padding:1rem 0; font-size:1.1rem; letter-spacing:0.5px; z-index:999;">
+    <span style="font-weight:600;">SmartSolar © <span id="year"></span> - Todos os direitos reservados</span>
+    <script>
+      // Mostrar rodapé apenas ao chegar no final da página
+      document.addEventListener('DOMContentLoaded', function() {
+        const footer = document.querySelector('footer');
+        footer.style.display = 'none';
+        window.addEventListener('scroll', function() {
+          if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
+            footer.style.display = 'block';
+          } else {
+            footer.style.display = 'none';
+          }
+        });
+      });
+    </script>
+  </footer>
+  </div>
+
+  <!-- Modal Perfil -->
+  <div id="profileModal" class="modal">
+    <div class="modal-content">
+      <span id="closeProfile" class="close">&times;</span>
+      <div id="profileView">
+        <div class="profile-header">
+          <img src="https://ui-avatars.com/api/?name=Usuario&background=00d4ff&color=fff" alt="Usuário">
+          <h3>Perfil do Usuário</h3>
+        </div>
+        <div class="profile-details">
+          <p><strong>Nome:</strong> <span id="profileName">Usuário</span></p>
+          <p><strong>Email:</strong> <span id="profileEmail">user@email.com</span></p>
+          <p><strong>Status:</strong> <span id="profileStatus">Ativo</span></p>
+          <p><strong>Último acesso:</strong> <span>16/09/2023 14:30</span></p>
+        </div>
+        <button id="editProfileBtn" class="btn-primary">Editar Perfil</button>
+      </div>
+      <div id="profileEdit" class="hidden">
+        <h3>Editar Perfil</h3>
+        <div class="form-group">
+          <label>Nome:</label>
+          <input type="text" id="editName" placeholder="Nome">
+        </div>
+        <div class="form-group">
+          <label>Email:</label>
+          <input type="email" id="editEmail" placeholder="Email">
+        </div>
+        <div class="form-group">
+          <label>Status:</label>
+          <select id="editStatus">
+            <option>Ativo</option>
+            <option>Inativo</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button id="saveProfile" class="btn-primary">Salvar</button>
+          <button id="cancelEdit" class="btn-secondary">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="src/scripts/dashboard.js"></script>
+  <script>
+    // Modal Perfil: garantir que só a visualização aparece ao abrir
+    document.addEventListener('DOMContentLoaded', function() {
+      var profileModal = document.getElementById('profileModal');
+      var profileView = document.getElementById('profileView');
+      var profileEdit = document.getElementById('profileEdit');
+      var editProfileBtn = document.getElementById('editProfileBtn');
+      var cancelEditBtn = document.getElementById('cancelEdit');
+      var userMenu = document.getElementById('userMenu');
+      var closeProfile = document.getElementById('closeProfile');
+
+      function showView() {
+        profileView.classList.remove('hidden');
+        profileEdit.classList.add('hidden');
+      }
+      function showEdit() {
+        profileView.classList.add('hidden');
+        profileEdit.classList.remove('hidden');
+      }
+
+      // Ao abrir o modal, mostrar apenas a visualização
+      userMenu.addEventListener('click', function() {
+        profileModal.style.display = 'block';
+        showView();
+      });
+
+      // Botão editar perfil
+      editProfileBtn.addEventListener('click', function() {
+        showEdit();
+      });
+
+      // Botão cancelar edição
+      cancelEditBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        showView();
+      });
+
+      // Fechar modal
+      closeProfile.addEventListener('click', function() {
+        profileModal.style.display = 'none';
+        showView();
+      });
+      // Fechar ao clicar fora do modal
+      window.onclick = function(event) {
+        if (event.target == profileModal) {
+          profileModal.style.display = 'none';
+          showView();
+        }
+      };
+    });
+  </script>
+</body>
+</html>
