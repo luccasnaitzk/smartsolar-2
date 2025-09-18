@@ -6,6 +6,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeAuthModal = document.getElementById('closeAuthModal');
     const authTabs = document.querySelectorAll('.auth-tab');
     const authForms = document.querySelectorAll('.auth-form');
+    const authHeaderTitle = document.querySelector('.auth-header h2');
+
+    // Helpers visuais
+    const updateAuthTitleForTab = (tabName) => {
+        if (!authHeaderTitle) return;
+        authHeaderTitle.textContent = tabName === 'register' ? 'Crie sua conta' : 'Acesse sua conta';
+    };
+
+    const setLoadingState = (formEl, isLoading, labels) => {
+        if (!formEl) return;
+        const btn = formEl.querySelector('.btn-full');
+        const inputs = formEl.querySelectorAll('input, button, select, textarea');
+        inputs.forEach(i => i.disabled = !!isLoading);
+        if (btn) {
+            if (isLoading) {
+                btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${labels.loading}`;
+            } else {
+                btn.textContent = labels.default;
+            }
+        }
+    };
     
     // Verificar se o usuário já está logado
     const isLoggedIn = localStorage.getItem('userLoggedIn');
@@ -18,6 +39,10 @@ document.addEventListener('DOMContentLoaded', function() {
         authBtn.addEventListener('click', function() {
             authModal.classList.add('active');
             document.body.style.overflow = 'hidden'; // Impede scroll do body
+            // Ajusta título conforme aba ativa no momento da abertura
+            const activeTab = document.querySelector('.auth-tab.active');
+            const current = activeTab ? activeTab.getAttribute('data-tab') : 'login';
+            updateAuthTitleForTab(current);
         });
     }
     
@@ -56,6 +81,9 @@ document.addEventListener('DOMContentLoaded', function() {
                       form.classList.add('active');
                   }
               });
+
+              // Atualiza título do cabeçalho
+              updateAuthTitleForTab(tabName);
           });
       });
     }
@@ -75,32 +103,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Simulação de login bem-sucedido
-            localStorage.setItem('userLoggedIn', 'true');
-            localStorage.setItem('userEmail', email);
-               // Atualiza último acesso
-               const now = new Date();
-               localStorage.setItem('userLastAccess', now.toLocaleString());
-            
-            // Verificar se há nome no cadastro
-            const userName = localStorage.getItem('userName');
-            // Não sobrescreve o nome completo se já existir
-            if (!userName || userName === email.split('@')[0]) {
-                // Tenta recuperar nome do cadastro salvo
-                const users = JSON.parse(localStorage.getItem('users') || '{}');
-                if (users[email] && users[email].name) {
-                    localStorage.setItem('userName', users[email].name);
-                } else {
-                    localStorage.setItem('userName', email.split('@')[0]);
+            // Feedback visual: carregando
+            setLoadingState(loginForm, true, { loading: 'Entrando...', default: 'Entrar' });
+
+            // Simulação de login: com delay para exibir loading/spinner
+            setTimeout(() => {
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('userEmail', email);
+                // Atualiza último acesso
+                const now = new Date();
+                localStorage.setItem('userLastAccess', now.toLocaleString());
+
+                // Verificar se há nome no cadastro
+                const userName = localStorage.getItem('userName');
+                // Não sobrescreve o nome completo se já existir
+                if (!userName || userName === email.split('@')[0]) {
+                    // Tenta recuperar nome do cadastro salvo
+                    const users = JSON.parse(localStorage.getItem('users') || '{}');
+                    if (users[email] && users[email].name) {
+                        localStorage.setItem('userName', users[email].name);
+                    } else {
+                        localStorage.setItem('userName', email.split('@')[0]);
+                    }
                 }
-            }
-            
-            alert('Login realizado com sucesso!');
-            authModal.classList.remove('active');
-            document.body.style.overflow = '';
-            
-            // Redirecionar para o dashboard
-            window.location.href = 'dashboard.html';
+
+                alert('Login realizado com sucesso!');
+                authModal.classList.remove('active');
+                document.body.style.overflow = '';
+                
+                // Redirecionar para o dashboard
+                window.location.href = 'dashboard.html';
+            }, 800);
         });
     }
     
@@ -131,27 +164,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-                        // Simulação de cadastro bem-sucedido
-                        localStorage.setItem('userLoggedIn', 'true');
-                        localStorage.setItem('userEmail', email);
-                        localStorage.setItem('userName', name);
-                        // Salva nome completo no objeto users
-                        let users = {};
-                        try {
-                            users = JSON.parse(localStorage.getItem('users')) || {};
-                        } catch {}
-                        users[email] = { name };
-                        localStorage.setItem('users', JSON.stringify(users));
-                        // Atualiza último acesso
-                        const now = new Date();
-                        localStorage.setItem('userLastAccess', now.toLocaleString());
-            
-            alert('Cadastro realizado com sucesso!');
-            authModal.classList.remove('active');
-            document.body.style.overflow = '';
-            
-            // Redirecionar para o dashboard
-            window.location.href = 'dashboard.html';
+            // Feedback visual: carregando
+            setLoadingState(registerForm, true, { loading: 'Criando...', default: 'Criar conta' });
+
+            // Simulação de cadastro: com delay para exibir loading/spinner
+            setTimeout(() => {
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('userEmail', email);
+                localStorage.setItem('userName', name);
+                // Salva nome completo no objeto users
+                let users = {};
+                try {
+                    users = JSON.parse(localStorage.getItem('users')) || {};
+                } catch {}
+                users[email] = { name };
+                localStorage.setItem('users', JSON.stringify(users));
+                // Atualiza último acesso
+                const now = new Date();
+                localStorage.setItem('userLastAccess', now.toLocaleString());
+
+                alert('Cadastro realizado com sucesso!');
+                authModal.classList.remove('active');
+                document.body.style.overflow = '';
+                
+                // Redirecionar para o dashboard
+                window.location.href = 'dashboard.html';
+            }, 800);
         });
     }
     

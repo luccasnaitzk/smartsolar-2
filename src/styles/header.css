@@ -1,69 +1,78 @@
 /* =============================================
-   HEADER.CSS - VERSÃO REFINADA
+   HEADER.CSS - ESTILO MODERNO SMARTSOLAR
    ============================================= */
 
-/* 1. Cabeçalho Principal */
+:root {
+    --header-bg: linear-gradient(90deg, #00d4ff 0%, #23243a 100%);
+    --header-shadow: 0 8px 25px rgba(0, 212, 255, 0.08);
+    --header-accent: #ffb400;
+    --header-radius: 18px;
+    --header-brand: #00d4ff;
+    --header-link: #23243a;
+    --header-link-hover: #00d4ff;
+    --header-login-bg: linear-gradient(135deg, #00d4ff, #23243a);
+}
+
 .site-header {
     position: fixed;
     top: 0;
     width: 100%;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: saturate(180%) blur(15px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-    transition: all 0.4s ease;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+    background: var(--header-bg);
+    box-shadow: var(--header-shadow);
+    border-bottom-left-radius: var(--header-radius);
+    border-bottom-right-radius: var(--header-radius);
+    transition: background 0.4s, box-shadow 0.4s;
 }
 
 .site-header.scrolled {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: saturate(180%) blur(20px);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.18);
+    background: linear-gradient(90deg, #23243a 0%, #00d4ff 100%);
 }
 
-/* Container do Navbar */
 #navbar {
     max-width: 1300px;
     margin: 0 auto;
-    padding: 12px 25px;
+    padding: 18px 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-/* 2. Marca e Logo */
 .brand {
     font-weight: 900;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     text-decoration: none;
-    color: #4361ee;
-    font-size: 2.2rem;
+    color: var(--header-brand);
+    font-size: 2.4rem;
     display: flex;
     align-items: center;
-    gap: 15px;
-    transition: transform 0.3s ease;
+    gap: 18px;
+    transition: transform 0.3s;
+    text-shadow: 0 2px 8px rgba(0,212,255,0.18);
 }
 
 .brand:hover {
-    transform: translateY(-3px);
+    transform: scale(1.04) translateY(-2px);
+    color: var(--header-accent);
 }
 
 .brand-logo {
-    height: 70px;
+    height: 60px;
     width: auto;
-    transition: transform 0.3s ease, filter 0.3s ease;
+    transition: transform 0.3s, filter 0.3s;
+    filter: drop-shadow(0 4px 12px rgba(0,212,255,0.18));
 }
 
 .brand-logo:hover {
-    transform: scale(1.05);
-    filter: drop-shadow(0 5px 10px rgba(67, 97, 238, 0.4));
+    transform: scale(1.08);
+    filter: drop-shadow(0 8px 20px rgba(255,180,0,0.18));
 }
 
-/* 3. Navegação */
 .nav-list {
     list-style: none;
     display: flex;
-    gap: 36px;
+    gap: 38px;
     margin: 0;
     padding: 0;
     align-items: center;
@@ -75,14 +84,15 @@
 
 .nav_item > a {
     text-decoration: none;
-    color: #2b2d42;
-    font-weight: 500;
-    position: relative;
+    color: var(--header-link);
+    font-weight: 600;
+    font-size: 1.08rem;
     padding: 10px 0;
-    transition: color 0.3s ease;
+    transition: color 0.3s;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 7px;
+    border-radius: 8px;
 }
 
 .nav_item > a:after {
@@ -92,13 +102,14 @@
     left: 0;
     width: 0;
     height: 3px;
-    background: linear-gradient(135deg, #4361ee, #3a0ca3);
+    background: var(--header-accent);
     border-radius: 3px;
-    transition: width 0.3s ease;
+    transition: width 0.3s;
 }
 
 .nav_item > a:hover {
-    color: #4361ee;
+    color: var(--header-link-hover);
+    background: rgba(0,212,255,0.08);
 }
 
 .nav_item > a:hover:after {
@@ -106,7 +117,7 @@
 }
 
 .nav_item > a .fa-chevron-down {
-    transition: transform 0.3s ease;
+    transition: transform 0.3s;
     font-size: 0.85em;
 }
 
@@ -114,23 +125,22 @@
     transform: rotate(180deg);
 }
 
-/* Submenu */
 .nav_item .submenu {
     position: absolute;
     top: 100%;
     left: 0;
-    background: rgba(255, 255, 255, 0.97);
+    background: rgba(255,255,255,0.98);
     backdrop-filter: blur(18px);
     border-radius: 14px;
-    padding: 12px;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+    padding: 14px;
+    box-shadow: 0 12px 35px rgba(0,212,255,0.10);
     opacity: 0;
     visibility: hidden;
     transform: translateY(12px);
-    transition: all 0.35s ease;
-    min-width: 200px;
+    transition: all 0.35s;
+    min-width: 210px;
     z-index: 1000;
-    border: 1px solid rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0,212,255,0.12);
 }
 
 .nav_item:hover .submenu {
@@ -141,36 +151,36 @@
 
 .nav_item .submenu a {
     display: block;
-    padding: 10px 16px;
-    color: #2b2d42;
+    padding: 12px 18px;
+    color: var(--header-link);
     text-decoration: none;
     border-radius: 10px;
-    transition: all 0.25s ease;
+    transition: background 0.25s, color 0.25s;
     font-weight: 500;
 }
 
 .nav_item .submenu a:hover {
-    background: rgba(67, 97, 238, 0.12);
-    color: #4361ee;
+    background: rgba(0,212,255,0.12);
+    color: var(--header-link-hover);
 }
 
-/* 4. Botões */
 .login-btn {
-    background: linear-gradient(135deg, #4361ee, #3a0ca3);
+    background: var(--header-login-bg);
     color: white;
     border: none;
-    padding: 16px 36px;
+    padding: 14px 34px;
     border-radius: 35px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: all 0.35s ease;
-    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    gap: 10px;
+    transition: all 0.35s;
+    box-shadow: 0 6px 20px rgba(0,212,255,0.18);
     position: relative;
     overflow: hidden;
     text-decoration: none;
+    font-size: 1.08rem;
 }
 
 .login-btn:before {
@@ -180,7 +190,7 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
     transition: 0.5s;
 }
 
@@ -189,8 +199,10 @@
 }
 
 .login-btn:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 28px rgba(67, 97, 238, 0.35);
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 12px 28px rgba(0,212,255,0.22);
+    background: linear-gradient(135deg, #ffb400, #00d4ff);
+    color: #23243a;
 }
 
 .nav-toggle {
@@ -198,19 +210,18 @@
     border: none;
     padding: 12px 14px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #4361ee, #3a0ca3);
+    background: var(--header-login-bg);
     color: white;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 18px rgba(67, 97, 238, 0.25);
+    transition: all 0.3s;
+    box-shadow: 0 6px 18px rgba(0,212,255,0.18);
 }
 
 .nav-toggle:hover {
     transform: scale(1.08);
-    box-shadow: 0 10px 25px rgba(67, 97, 238, 0.3);
+    box-shadow: 0 10px 25px rgba(0,212,255,0.22);
 }
 
-/* 5. Responsividade */
 @media (max-width: 900px) {
     .nav-toggle {
         display: block;
@@ -222,12 +233,13 @@
         top: 100%;
         left: 0;
         right: 0;
-        background: rgba(255, 255, 255, 0.97);
+        background: rgba(255,255,255,0.98);
         backdrop-filter: blur(18px);
         flex-direction: column;
-        padding: 25px;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-        gap: 18px;
+        padding: 28px;
+        box-shadow: 0 12px 30px rgba(0,212,255,0.10);
+        gap: 22px;
+        border-radius: 0 0 18px 18px;
     }
 
     .nav-list.open {
@@ -268,7 +280,7 @@
     }
 
     .brand-logo {
-        height: 50px;
+        height: 44px;
         margin-right: 12px;
     }
 }

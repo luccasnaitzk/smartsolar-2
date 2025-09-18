@@ -55,18 +55,24 @@ document.addEventListener('DOMContentLoaded', function() {
         threshold: 0.1
     };
     
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, observerOptions);
-    
-    // Observar todos os elementos com a classe card
-    document.querySelectorAll('.card').forEach(card => {
-        observer.observe(card);
-    });
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // CSS espera a classe 'in-view' para revelar
+                    entry.target.classList.add('in-view');
+                    // Parar de observar após revelar
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        // Revelar cabeçalhos de seção e cards quando entram na viewport
+        document.querySelectorAll('.section-header').forEach(el => observer.observe(el));
+        document.querySelectorAll('.card').forEach(el => observer.observe(el));
+    } else {
+        // Fallback: revela imediatamente em navegadores antigos
+        document.querySelectorAll('.section-header, .card').forEach(el => el.classList.add('in-view'));
+    }
     
     // Contador de estatísticas
     const stats = document.querySelectorAll('.stat-number');
