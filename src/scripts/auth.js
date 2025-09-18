@@ -78,11 +78,21 @@ document.addEventListener('DOMContentLoaded', function() {
             // Simulação de login bem-sucedido
             localStorage.setItem('userLoggedIn', 'true');
             localStorage.setItem('userEmail', email);
+               // Atualiza último acesso
+               const now = new Date();
+               localStorage.setItem('userLastAccess', now.toLocaleString());
             
             // Verificar se há nome no cadastro
             const userName = localStorage.getItem('userName');
-            if (!userName) {
-                localStorage.setItem('userName', email.split('@')[0]);
+            // Não sobrescreve o nome completo se já existir
+            if (!userName || userName === email.split('@')[0]) {
+                // Tenta recuperar nome do cadastro salvo
+                const users = JSON.parse(localStorage.getItem('users') || '{}');
+                if (users[email] && users[email].name) {
+                    localStorage.setItem('userName', users[email].name);
+                } else {
+                    localStorage.setItem('userName', email.split('@')[0]);
+                }
             }
             
             alert('Login realizado com sucesso!');
@@ -121,10 +131,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Simulação de cadastro bem-sucedido
-            localStorage.setItem('userLoggedIn', 'true');
-            localStorage.setItem('userEmail', email);
-            localStorage.setItem('userName', name);
+                        // Simulação de cadastro bem-sucedido
+                        localStorage.setItem('userLoggedIn', 'true');
+                        localStorage.setItem('userEmail', email);
+                        localStorage.setItem('userName', name);
+                        // Salva nome completo no objeto users
+                        let users = {};
+                        try {
+                            users = JSON.parse(localStorage.getItem('users')) || {};
+                        } catch {}
+                        users[email] = { name };
+                        localStorage.setItem('users', JSON.stringify(users));
+                        // Atualiza último acesso
+                        const now = new Date();
+                        localStorage.setItem('userLastAccess', now.toLocaleString());
             
             alert('Cadastro realizado com sucesso!');
             authModal.classList.remove('active');

@@ -83,7 +83,11 @@
           <i class="fas fa-cloud-sun" title="Clima"></i>
           <span>28°C • <i class="fas fa-tint" title="Umidade"></i> 45%</span>
         </div>
-        <button id="darkToggle" class="theme-toggle">🌙</button>
+  <button id="darkToggle" class="theme-toggle">🌙</button>
+        <span id="headerTime" style="margin-left:1rem;font-weight:600;color:#00d4ff;font-size:1.1rem;border:2px solid #00d4ff;border-radius:8px;padding:0.3rem 1rem;display:inline-flex;align-items:center;gap:0.5rem;background:#18192b;">
+          <i class="fas fa-clock" style="color:#00d4ff;font-size:1.1rem;"></i>
+          <span id="headerTimeValue"></span>
+        </span>
         <button id="logoutBtn" class="logout-btn" title="Sair" style="margin-left:0.7rem; background:#e63946; color:#fff; border:none; border-radius:8px; padding:0.5rem 1.1rem; font-size:1rem; cursor:pointer; transition:background 0.2s;">
           <i class="fas fa-sign-out-alt"></i> Sair
         </button>
@@ -442,6 +446,89 @@ s
               <button id="saveThresholds" class="btn-primary"><i class="fas fa-save"></i> Salvar Limites</button>
             </div>
           </div>
+            <!-- Preferências do Usuário -->
+            <div class="card config-card">
+              <div class="card-header">
+                <h3><i class="fas fa-user-cog"></i> Preferências do Usuário</h3>
+              </div>
+              <div class="config-fields">
+                <div class="config-field">
+                  <label for="themeSelect"><i class="fas fa-paint-brush"></i> Tema</label>
+                  <select id="themeSelect">
+                    <option value="light">Claro</option>
+                    <option value="dark">Escuro</option>
+                  </select>
+                </div>
+                <div class="config-field">
+                  <label for="langSelect"><i class="fas fa-language"></i> Idioma</label>
+                  <select id="langSelect">
+                    <option value="pt">Português</option>
+                    <option value="en">English</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Notificações -->
+            <div class="card config-card">
+              <div class="card-header">
+                <h3><i class="fas fa-bell"></i> Notificações</h3>
+              </div>
+              <div class="config-fields">
+                <div class="config-field">
+                  <label for="emailNotify"><i class="fas fa-envelope"></i> E-mail</label>
+                  <input type="email" id="emailNotify" placeholder="Seu e-mail">
+                </div>
+                <div class="config-field">
+                  <label for="smsNotify"><i class="fas fa-mobile-alt"></i> SMS</label>
+                  <input type="text" id="smsNotify" placeholder="Seu número">
+                </div>
+                <div class="config-field">
+                  <label><input type="checkbox" id="alertLowGen"> Alertar geração baixa</label>
+                </div>
+                <button id="saveNotifications" class="btn-primary" style="margin-top:0.8rem;"><i class="fas fa-save"></i> Salvar</button>
+              </div>
+            </div>
+            <!-- Backup/Restauração -->
+            <div class="card config-card">
+              <div class="card-header">
+                <h3><i class="fas fa-database"></i> Backup & Restauração</h3>
+              </div>
+              <div class="config-fields">
+                <button id="backupBtn" class="btn-secondary"><i class="fas fa-download"></i> Fazer Backup</button>
+                <button id="restoreBtn" class="btn-secondary"><i class="fas fa-upload"></i> Restaurar</button>
+              </div>
+            </div>
+            <!-- Gerenciamento de Usuários -->
+            <div class="card config-card">
+              <div class="card-header">
+                <h3><i class="fas fa-users-cog"></i> Gerenciamento de Usuários</h3>
+              </div>
+              <div class="config-fields">
+                <div class="config-field">
+                  <label for="addUser"><i class="fas fa-user-plus"></i> Adicionar Usuário</label>
+                  <input type="text" id="addUser" placeholder="Nome ou e-mail">
+                  <button id="addUserBtn" class="btn-primary"><i class="fas fa-plus"></i> Adicionar</button>
+                </div>
+                <div class="config-field">
+                  <label for="removeUser"><i class="fas fa-user-minus"></i> Remover Usuário</label>
+                  <input type="text" id="removeUser" placeholder="Nome ou e-mail">
+                  <button id="removeUserBtn" class="btn-danger" style="background:#e63946;color:#fff;"><i class="fas fa-minus"></i> Remover</button>
+                </div>
+                <div class="config-field" style="margin-top:1.2rem;">
+                  <label><i class="fas fa-users"></i> Usuários cadastrados</label>
+                  <ul id="userList" style="margin:0.5rem 0 0 0; padding-left:1.2rem; color:#00d4ff; font-weight:500;"></ul>
+                </div>
+                <div class="config-field">
+                  <label for="userPermSelect"><i class="fas fa-user-shield"></i> Permissão do Usuário</label>
+                  <select id="userPermSelect">
+                    <option value="admin">Administrador</option>
+                    <option value="viewer">Visualizador</option>
+                  </select>
+                  <button id="setPermBtn" class="btn-secondary"><i class="fas fa-check"></i> Definir Permissão</button>
+                  <input type="text" id="permUserName" placeholder="Nome ou e-mail do usuário" style="margin-top:0.5rem;">
+                </div>
+              </div>
+            </div>
         </div>
       </section>
     </main>
@@ -467,12 +554,11 @@ s
   </div>
 
   <!-- Modal Perfil -->
-  <div id="profileModal" class="modal">
-    <div class="modal-content">
+  <div id="profileModal" class="modal" style="display:flex;align-items:center;justify-content:center;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;">
       <span id="closeProfile" class="close">&times;</span>
       <div id="profileView">
         <div class="profile-header">
-          <img src="https://ui-avatars.com/api/?name=Usuario&background=00d4ff&color=fff" alt="Usuário">
+          <img id="userProfileImg" src="https://ui-avatars.com/api/?name=Usuario&background=00d4ff&color=fff" alt="Usuário" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">
           <h3>Perfil do Usuário</h3>
         </div>
         <div class="profile-details">
@@ -483,26 +569,31 @@ s
         </div>
         <button id="editProfileBtn" class="btn-primary">Editar Perfil</button>
       </div>
-      <div id="profileEdit" class="hidden">
-        <h3>Editar Perfil</h3>
-        <div class="form-group">
-          <label>Nome:</label>
-          <input type="text" id="editName" placeholder="Nome">
+  <div id="profileEdit" class="hidden" style="padding: 24px 16px; background: #23243a; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.18); max-width: 350px; margin: 0 auto;">
+  <h3 style="text-align:center; color:#00d4ff; font-weight:600; margin-bottom:18px;">Editar Perfil</h3>
+        <div class="form-group" style="display:flex; flex-direction:column; align-items:center; margin-bottom:18px;">
+          <label style="font-weight:500; margin-bottom:6px; color:#fff;">Foto de Perfil:</label>
+          <img id="previewProfileImg" src="https://ui-avatars.com/api/?name=Usuario&background=00d4ff&color=fff" alt="Prévia da foto" style="width:90px;height:90px;border-radius:50%;object-fit:cover;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.10);">
+          <input type="file" id="editProfileImg" accept="image/*" style="margin-top:4px;">
         </div>
-        <div class="form-group">
-          <label>Email:</label>
-          <input type="email" id="editEmail" placeholder="Email">
+        <div class="form-group" style="margin-bottom:14px;">
+          <label style="font-weight:500; color:#fff;">Nome:</label>
+          <input type="text" id="editName" placeholder="Nome" style="width:100%;padding:8px;border-radius:6px;border:1px solid #444;background:#23243a;color:#fff;">
         </div>
-        <div class="form-group">
-          <label>Status:</label>
-          <select id="editStatus">
+        <div class="form-group" style="margin-bottom:14px;">
+          <label style="font-weight:500; color:#fff;">Email:</label>
+          <input type="email" id="editEmail" placeholder="Email" style="width:100%;padding:8px;border-radius:6px;border:1px solid #444;background:#23243a;color:#fff;">
+        </div>
+        <div class="form-group" style="margin-bottom:18px;">
+          <label style="font-weight:500; color:#fff;">Status:</label>
+          <select id="editStatus" style="width:100%;padding:8px;border-radius:6px;border:1px solid #444;background:#23243a;color:#fff;">
             <option>Ativo</option>
             <option>Inativo</option>
           </select>
         </div>
-        <div class="form-actions">
-          <button id="saveProfile" class="btn-primary">Salvar</button>
-          <button id="cancelEdit" class="btn-secondary">Cancelar</button>
+        <div class="form-actions" style="display:flex; justify-content:space-between; gap:10px;">
+          <button id="saveProfile" class="btn-primary" style="flex:1; background:#00d4ff; color:#fff; border:none; border-radius:6px; padding:10px 0; font-weight:600; cursor:pointer;">Salvar</button>
+          <button id="cancelEdit" class="btn-secondary" style="flex:1; background:#e0e0e0; color:#333; border:none; border-radius:6px; padding:10px 0; font-weight:500; cursor:pointer;">Cancelar</button>
         </div>
       </div>
     </div>
