@@ -42,6 +42,9 @@
       <button class="tab" data-section="alertas">
         <i class="fas fa-bell"></i> Alertas
       </button>
+      <button class="tab" data-section="usuarios">
+        <i class="fas fa-users"></i> Usuários
+      </button>
       <button class="tab" data-section="configuracoes">
         <i class="fas fa-cog"></i> Configurações
       </button>
@@ -70,7 +73,6 @@
     </footer>
     </div>
   </div>
-
   <!-- Conteúdo Principal -->
   <div class="main-content">
     <!-- Header -->
@@ -223,7 +225,6 @@
             </div>
           </div>
         </div>
-s
         <!-- Informações Adicionais -->
         <div class="grid" style="display: flex; gap: 2rem; align-items: stretch;">
           <div class="card" style="flex: 1;">
@@ -376,15 +377,34 @@ s
       <!-- PLACAS -->
       <section id="section-placas" hidden>
         <h2>🔋 Gerenciamento de Placas</h2>
-        <form id="placaForm">
-          <input type="text" id="placaNome" placeholder="Nome da placa" required>
-          <input type="number" id="placaPotencia" placeholder="Potência (kWp)" step="0.1" required>
-          <select id="placaStatus">
-            <option value="Ativa">Ativa</option>
-            <option value="Inativa">Inativa</option>
-            <option value="Manutenção">Manutenção</option>
-          </select>
-          <button type="submit">Cadastrar</button>
+        <form id="placaForm" novalidate>
+          <div class="form-row">
+            <label for="placaNome"><i class="fas fa-tag"></i> Nome da placa</label>
+            <input type="text" id="placaNome" name="placaNome" placeholder="Ex.: Placa 04" minlength="2" maxlength="40" required>
+            <small class="field-hint">Use um nome curto e único.</small>
+            <small class="field-error" id="placaNomeError" hidden></small>
+          </div>
+          <div class="form-row">
+            <label for="placaPotencia"><i class="fas fa-bolt"></i> Potência</label>
+            <div class="input-with-unit">
+              <input type="number" id="placaPotencia" name="placaPotencia" placeholder="Ex.: 2.50" step="0.01" min="0.05" max="50" required inputmode="decimal">
+              <span class="unit">kWp</span>
+            </div>
+            <small class="field-hint">Se informar em Watts (ex.: 5000), converteremos para kWp automaticamente.</small>
+            <small class="field-error" id="placaPotenciaError" hidden></small>
+          </div>
+          <div class="form-row">
+            <label for="placaStatus"><i class="fas fa-circle-notch"></i> Status</label>
+            <select id="placaStatus" name="placaStatus" required>
+              <option value="Ativa">Ativa</option>
+              <option value="Inativa">Inativa</option>
+              <option value="Manutenção">Manutenção</option>
+            </select>
+          </div>
+          <button type="submit" id="placaCadastrarBtn" class="btn-primary" disabled>
+            <i class="fas fa-plus"></i> Cadastrar
+          </button>
+          <small id="placaSuccess" class="field-success" hidden>Placa cadastrada com sucesso.</small>
         </form>
         <table id="placaTable">
           <thead>
@@ -406,13 +426,51 @@ s
   <button id="clearAlerts" class="btn-limpar">🗑 Limpar</button>
       </section>
 
+      <!-- USUÁRIOS -->
+      <section id="section-usuarios" hidden>
+        <h2 style="margin-bottom:2rem;"><i class="fas fa-users"></i> Usuários</h2>
+        <div class="grid large">
+          <div class="card config-card">
+            <div class="card-header">
+              <h3><i class="fas fa-users-cog"></i> Gerenciamento de Usuários</h3>
+            </div>
+            <div class="config-fields">
+              <div class="config-field">
+                <label for="addUser"><i class="fas fa-user-plus"></i> Adicionar Usuário</label>
+                <input type="text" id="addUser" placeholder="Nome ou e-mail">
+                <button id="addUserBtn" class="btn-primary"><i class="fas fa-plus"></i> Adicionar</button>
+              </div>
+              <div class="config-field">
+                <label for="removeUser"><i class="fas fa-user-minus"></i> Remover Usuário</label>
+                <input type="text" id="removeUser" placeholder="Nome ou e-mail">
+                <button id="removeUserBtn" class="btn-danger" style="background:#e63946;color:#fff;"><i class="fas fa-minus"></i> Remover</button>
+              </div>
+              <div class="config-field" style="margin-top:1.2rem;">
+                <label><i class="fas fa-users"></i> Usuários cadastrados</label>
+                <input type="text" id="userSearch" placeholder="Buscar por nome ou e-mail" />
+                <ul id="userList" style="margin:0.5rem 0 0 0; padding-left:1.2rem; color:#00d4ff; font-weight:500;"></ul>
+              </div>
+              <div class="config-field">
+                <label for="userPermSelect"><i class="fas fa-user-shield"></i> Permissão do Usuário</label>
+                <select id="userPermSelect">
+                  <option value="admin">Administrador</option>
+                  <option value="viewer">Visualizador</option>
+                </select>
+                <button id="setPermBtn" class="btn-secondary"><i class="fas fa-check"></i> Definir Permissão</button>
+                <input type="text" id="permUserName" placeholder="Nome ou e-mail do usuário" style="margin-top:0.5rem;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- CONFIGURAÇÕES -->
       <section id="section-configuracoes" hidden>
         <h2 style="margin-bottom:2rem;"><i class="fas fa-cogs"></i> Configurações</h2>
         <div class="grid large">
           <div class="card config-card">
             <div class="card-header">
-              <h3><i class="fas fa-solar-panel"></i> Parâmetros da Usina</h3>
+              <h3><i class="fas fa-solar-panel"></i> Parâmetros da Placa</h3>
             </div>
             <div class="config-fields">
               <div class="config-field">
@@ -488,50 +546,37 @@ s
                 <button id="saveNotifications" class="btn-primary" style="margin-top:0.8rem;"><i class="fas fa-save"></i> Salvar</button>
               </div>
             </div>
-            <!-- Backup/Restauração -->
+            <!-- Backup/Restauração (movido para baixo) -->
             <div class="card config-card">
               <div class="card-header">
                 <h3><i class="fas fa-database"></i> Backup & Restauração</h3>
               </div>
               <div class="config-fields">
-                <button id="backupBtn" class="btn-secondary"><i class="fas fa-download"></i> Fazer Backup</button>
-                <button id="restoreBtn" class="btn-secondary"><i class="fas fa-upload"></i> Restaurar</button>
-              </div>
-            </div>
-            <!-- Gerenciamento de Usuários -->
-            <div class="card config-card">
-              <div class="card-header">
-                <h3><i class="fas fa-users-cog"></i> Gerenciamento de Usuários</h3>
-              </div>
-              <div class="config-fields">
-                <div class="config-field">
-                  <label for="addUser"><i class="fas fa-user-plus"></i> Adicionar Usuário</label>
-                  <input type="text" id="addUser" placeholder="Nome ou e-mail">
-                  <button id="addUserBtn" class="btn-primary"><i class="fas fa-plus"></i> Adicionar</button>
-                </div>
-                <div class="config-field">
-                  <label for="removeUser"><i class="fas fa-user-minus"></i> Remover Usuário</label>
-                  <input type="text" id="removeUser" placeholder="Nome ou e-mail">
-                  <button id="removeUserBtn" class="btn-danger" style="background:#e63946;color:#fff;"><i class="fas fa-minus"></i> Remover</button>
-                </div>
-                <div class="config-field" style="margin-top:1.2rem;">
-                  <label><i class="fas fa-users"></i> Usuários cadastrados</label>
-                  <ul id="userList" style="margin:0.5rem 0 0 0; padding-left:1.2rem; color:#00d4ff; font-weight:500;"></ul>
-                </div>
-                <div class="config-field">
-                  <label for="userPermSelect"><i class="fas fa-user-shield"></i> Permissão do Usuário</label>
-                  <select id="userPermSelect">
-                    <option value="admin">Administrador</option>
-                    <option value="viewer">Visualizador</option>
-                  </select>
-                  <button id="setPermBtn" class="btn-secondary"><i class="fas fa-check"></i> Definir Permissão</button>
-                  <input type="text" id="permUserName" placeholder="Nome ou e-mail do usuário" style="margin-top:0.5rem;">
-                </div>
+                <button id="backupBtn" class="btn-secondary" aria-label="Fazer Backup" title="Fazer Backup"><i class="fas fa-download"></i></button>
+                <button id="restoreBtn" class="btn-secondary" aria-label="Restaurar" title="Restaurar"><i class="fas fa-upload"></i></button>
               </div>
             </div>
         </div>
       </section>
     </main>
+
+    <!-- Ajuda & Suporte - Botão flutuante -->
+    <div id="supportFab" class="support-fab" role="button" tabindex="0" aria-haspopup="true" aria-controls="supportPanel" aria-label="Ajuda e Suporte">
+      <i class="fas fa-comment-dots" aria-hidden="true"></i>
+      <span class="support-badge" id="supportBadge" aria-hidden="true">1</span>
+    </div>
+    <div id="supportPanel" class="support-panel" hidden>
+      <div class="support-header">
+        <span id="supportHeaderTitle"><i class="fas fa-life-ring"></i> Ajuda e Suporte</span>
+        <div class="support-status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span class="text" id="supportStatusText">Online</span></div>
+        <button class="support-close" id="supportClose" aria-label="Fechar suporte">&times;</button>
+      </div>
+      <div class="support-body">
+        <div class="support-intro" id="supportIntroText">Como podemos ajudar hoje?</div>
+        <button class="support-action" id="supportWhatsApp"><i class="fab fa-whatsapp"></i> <span class="label">WhatsApp</span></button>
+        <button class="support-action primary" id="supportTicket"><i class="fas fa-ticket-alt"></i> <span class="label">Abrir chamado</span></button>
+      </div>
+    </div>
 
     <footer>
       <footer style="width:100%; position:fixed; left:0; bottom:0; background:#1e1e2f; color:#00d4ff; text-align:center; padding:1rem 0; font-size:1.1rem; letter-spacing:0.5px; z-index:999;">

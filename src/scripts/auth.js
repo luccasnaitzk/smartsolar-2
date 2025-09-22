@@ -88,6 +88,14 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
     
+    // Helpers para users
+    function getUsersObj() {
+        try { return JSON.parse(localStorage.getItem('users') || '{}'); } catch { return {}; }
+    }
+    function setUsersObj(obj) {
+        localStorage.setItem('users', JSON.stringify(obj || {}));
+    }
+
     // Submit do formulário de login
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
@@ -108,6 +116,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Simulação de login: com delay para exibir loading/spinner
             setTimeout(() => {
+                // Se houver senha cadastrada para o usuário, validar
+                const users = getUsersObj();
+                const stored = users[email];
+                if (stored && stored.password && stored.password !== password) {
+                    setLoadingState(loginForm, false, { loading: 'Entrando...', default: 'Entrar' });
+                    alert('E-mail ou senha inválidos.');
+                    return;
+                }
                 localStorage.setItem('userLoggedIn', 'true');
                 localStorage.setItem('userEmail', email);
                 // Atualiza último acesso
@@ -173,12 +189,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('userEmail', email);
                 localStorage.setItem('userName', name);
                 // Salva nome completo no objeto users
-                let users = {};
-                try {
-                    users = JSON.parse(localStorage.getItem('users')) || {};
-                } catch {}
-                users[email] = { name };
-                localStorage.setItem('users', JSON.stringify(users));
+                const users = getUsersObj();
+                users[email] = { name, password };
+                setUsersObj(users);
                 // Atualiza último acesso
                 const now = new Date();
                 localStorage.setItem('userLastAccess', now.toLocaleString());
@@ -193,16 +206,157 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Recuperação de senha
-    const forgotPassword = document.getElementById('forgotPassword');
-    if (forgotPassword) {
-        forgotPassword.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value || prompt('Digite seu e-mail para recuperação:');
-            if (email) {
-                alert(`Um e-mail de recuperação será enviado para: ${email}`);
-            }
-        });
-    }
+        // Recuperação de senha - Modal com fluxo (email -> código -> nova senha)
+        function openForgotModal(prefillEmail) {
+                const overlay = document.createElement('div');
+                overlay.style.position = 'fixed';
+                overlay.style.inset = '0';
+                overlay.style.background = 'rgba(0,0,0,0.55)';
+                overlay.style.display = 'flex';
+                overlay.style.alignItems = 'center';
+                overlay.style.justifyContent = 'center';
+                overlay.style.zIndex = '10000';
+
+                const card = document.createElement('div');
+                card.style.background = '#23243a';
+                card.style.color = '#fff';
+                card.style.borderRadius = '16px';
+                card.style.boxShadow = '0 10px 30px rgba(0,0,0,0.35)';
+                card.style.padding = '20px 18px';
+                card.style.minWidth = '320px';
+                card.style.maxWidth = '92vw';
+                card.style.width = '420px';
+
+                card.innerHTML = `
+                    <h3 style="margin:0 0 12px 0; color:#00d4ff; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-unlock-alt"></i> Recuperar senha
+                    </h3>
+                    <div id="step1">
+                        <label style="display:block; font-weight:600; color:#a6e7ff; margin-bottom:6px;">E-mail da conta</label>
+                        <input id="fpEmail" type="email" placeholder="voce@exemplo.com" style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid #3a3b54; background:#1c1d32; color:#fff;">
+                        <small style="display:block; margin-top:8px; color:#aeb7d0; opacity:.9;">Enviaremos um código de verificação (simulado).</small>
+                        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:14px;">
+                            <button id="fpCancel1" class="btn-secondary" style="padding:10px 14px; border-radius:10px; border:1px solid #3a3b54; background:#323453; color:#fff; cursor:pointer;">Cancelar</button>
+                            <button id="fpSend" class="btn-primary" style="padding:10px 14px; border-radius:10px; background:#00d4ff; color:#111; font-weight:700; border:none; cursor:pointer;">Enviar código</button>
+                        </div>
+                    </div>
+                    <div id="step2" style="display:none;">
+                        <label style="display:block; font-weight:600; color:#a6e7ff; margin-bottom:6px;">Código recebido</label>
+                        <input id="fpCode" type="text" placeholder="6 dígitos" style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid #3a3b54; background:#1c1d32; color:#fff;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+                            <label style="font-weight:600; color:#a6e7ff;">Nova senha
+                                <input id="fpPass" type="password" placeholder="********" style="margin-top:6px; width:100%; padding:10px 12px; border-radius:10px; border:1px solid #3a3b54; background:#1c1d32; color:#fff;">
+                            </label>
+                            <label style="font-weight:600; color:#a6e7ff;">Confirmar senha
+                                <input id="fpPass2" type="password" placeholder="********" style="margin-top:6px; width:100%; padding:10px 12px; border-radius:10px; border:1px solid #3a3b54; background:#1c1d32; color:#fff;">
+                            </label>
+                        </div>
+                        <small id="fpHint" style="display:block; margin-top:8px; color:#aeb7d0; opacity:.9;"></small>
+                        <div style="display:flex; gap:10px; justify-content:space-between; margin-top:14px;">
+                            <button id="fpBack" class="btn-secondary" style="padding:10px 14px; border-radius:10px; border:1px solid #3a3b54; background:#323453; color:#fff; cursor:pointer;">Voltar</button>
+                            <div style="display:flex; gap:10px;">
+                                <button id="fpCancel2" class="btn-secondary" style="padding:10px 14px; border-radius:10px; border:1px solid #3a3b54; background:#323453; color:#fff; cursor:pointer;">Cancelar</button>
+                                <button id="fpReset" class="btn-primary" style="padding:10px 14px; border-radius:10px; background:#00d4ff; color:#111; font-weight:700; border:none; cursor:pointer;">Redefinir</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                overlay.appendChild(card);
+                document.body.appendChild(overlay);
+
+                const emailEl = card.querySelector('#fpEmail');
+                const codeEl = card.querySelector('#fpCode');
+                const passEl = card.querySelector('#fpPass');
+                const pass2El = card.querySelector('#fpPass2');
+                const hintEl = card.querySelector('#fpHint');
+                const step1 = card.querySelector('#step1');
+                const step2 = card.querySelector('#step2');
+                const btnSend = card.querySelector('#fpSend');
+                const btnReset = card.querySelector('#fpReset');
+                const btnBack = card.querySelector('#fpBack');
+                const btnCancel1 = card.querySelector('#fpCancel1');
+                const btnCancel2 = card.querySelector('#fpCancel2');
+
+                if (prefillEmail) emailEl.value = prefillEmail;
+
+                function close() { if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay); }
+                [btnCancel1, btnCancel2].forEach(b => b && b.addEventListener('click', close));
+                overlay.addEventListener('click', (ev) => { if (ev.target === overlay) close(); });
+                overlay.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') close(); });
+
+                function genCode() {
+                        const n = Math.floor(100000 + Math.random() * 900000);
+                        return String(n);
+                }
+                function saveCode(email, code) {
+                        let codes = {};
+                        try { codes = JSON.parse(localStorage.getItem('resetCodes') || '{}'); } catch {}
+                        codes[email] = { code, exp: Date.now() + 10 * 60 * 1000 }; // 10min
+                        localStorage.setItem('resetCodes', JSON.stringify(codes));
+                }
+                function getCode(email) {
+                        try {
+                                const codes = JSON.parse(localStorage.getItem('resetCodes') || '{}');
+                                return codes[email];
+                        } catch { return null; }
+                }
+
+                btnSend.addEventListener('click', () => {
+                        const email = (emailEl.value || '').trim();
+                        if (!email) { alert('Informe seu e-mail.'); emailEl.focus(); return; }
+                        const users = getUsersObj();
+                        if (!users[email]) { alert('E-mail não cadastrado. Faça seu cadastro primeiro.'); return; }
+                        const code = genCode();
+                        saveCode(email, code);
+                        // Dica no demo: exibimos o código na UI
+                        hintEl.textContent = `Código enviado (demo): ${code}. Validade: 10 minutos.`;
+                        step1.style.display = 'none';
+                        step2.style.display = '';
+                        setTimeout(() => codeEl && codeEl.focus(), 0);
+                });
+
+                btnBack.addEventListener('click', () => {
+                        step2.style.display = 'none';
+                        step1.style.display = '';
+                });
+
+                btnReset.addEventListener('click', () => {
+                        const email = (emailEl.value || '').trim();
+                        const rec = getCode(email);
+                        const code = (codeEl.value || '').trim();
+                        const p1 = (passEl.value || '').trim();
+                        const p2 = (pass2El.value || '').trim();
+                        if (!code) { alert('Informe o código.'); codeEl.focus(); return; }
+                        if (!rec) { alert('Código expirado. Envie novamente.'); return; }
+                        if (Date.now() > rec.exp) { alert('Código expirado. Envie novamente.'); return; }
+                        if (code !== rec.code) { alert('Código inválido.'); return; }
+                        if (!p1 || p1.length < 4) { alert('A senha deve ter ao menos 4 caracteres.'); passEl.focus(); return; }
+                        if (p1 !== p2) { alert('As senhas não coincidem.'); pass2El.focus(); return; }
+                        const users = getUsersObj();
+                        if (!users[email]) { alert('Usuário não encontrado.'); return; }
+                        users[email] = { ...(users[email]||{}), password: p1 };
+                        setUsersObj(users);
+                        // Pré-preenche login com a nova senha
+                        const loginEmail = document.getElementById('loginEmail');
+                        const loginPassword = document.getElementById('loginPassword');
+                        if (loginEmail) loginEmail.value = email;
+                        if (loginPassword) loginPassword.value = p1;
+                        // Alterna para a aba de login
+                        const loginTab = document.querySelector('.auth-tab[data-tab="login"]');
+                        if (loginTab) loginTab.click();
+                        alert('Senha redefinida com sucesso!');
+                        close();
+                });
+        }
+
+        // Recuperação de senha
+        const forgotPassword = document.getElementById('forgotPassword');
+        if (forgotPassword) {
+                forgotPassword.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const prefill = document.getElementById('loginEmail')?.value || '';
+                        openForgotModal(prefill);
+                });
+        }
 });

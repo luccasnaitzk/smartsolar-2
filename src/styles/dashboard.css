@@ -298,6 +298,294 @@ main {
   transition: transform 0.3s, background 0.3s;
 }
 
+/* CONFIGURAÇÕES – Campos mais bonitos */
+.config-card .config-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2rem;
+}
+.config-card .config-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem 0.8rem;
+  align-items: center;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+}
+.config-card .card-header { margin-bottom: 0.4rem; }
+.config-card .card-header h3 {
+  font-size: 1.1rem;
+  letter-spacing: 0.2px;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.config-card .card-header h3 i { font-size: 1.05em; }
+.config-card .config-field label {
+  grid-column: 1 / -1;
+  font-weight: 600;
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.1rem;
+}
+.config-card .config-field input,
+.config-card .config-field select {
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--dark-text);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 0.65rem 0.9rem;
+  outline: none;
+  transition: box-shadow 0.2s, border 0.2s, background 0.2s;
+  width: 100%;
+  min-width: 0; /* evita overflow dentro do grid */
+  min-height: 44px;
+  line-height: 1.35;
+  font-size: 0.97rem;
+}
+.config-card .config-field input::placeholder {
+  color: rgba(255,255,255,0.55);
+}
+.config-card .config-field input:focus,
+.config-card .config-field select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.15);
+  background: rgba(0,0,0,0.4);
+}
+.config-card .config-unit {
+  color: var(--primary);
+  font-weight: 700;
+  background: rgba(0,212,255,0.12);
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  justify-self: end;
+  white-space: nowrap;
+  align-self: center;
+  margin-left: 0.25rem;
+}
+/* Botões soltos dentro do grid devem ocupar a linha inteira */
+.config-card .config-fields > .btn-primary,
+.config-card .config-fields > .btn-secondary,
+.config-card .config-fields > .btn-danger,
+.config-card .config-fields > button {
+  grid-column: 1 / -1;
+  justify-self: end;
+}
+.config-card .config-field button,
+.config-card .config-fields > button,
+.config-card .config-fields > .btn-primary,
+.config-card .config-fields > .btn-secondary,
+.config-card .config-fields > .btn-danger {
+  height: 44px;
+  font-size: 0.95rem;
+  padding: 0 1rem;
+}
+
+/* Linha com botão e input (ex.: adicionar/remover usuário) */
+.config-card .config-field:has(button) {
+  grid-template-columns: 1fr auto;
+}
+.config-card .config-field button {
+  height: 44px;
+}
+
+/* Campo de permissão: select + botão lado a lado, input abaixo full width */
+.config-card .config-field:has(#userPermSelect) {
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+}
+.config-card .config-field:has(#userPermSelect) #userPermSelect {
+  width: auto;
+  min-width: 180px;
+}
+.config-card .config-field:has(#userPermSelect) #setPermBtn {
+  justify-self: end;
+}
+.config-card .config-field:has(#userPermSelect) #permUserName {
+  grid-column: 1 / -1;
+  margin-top: 0.5rem;
+}
+
+/* Tema claro para Configurações */
+body[data-theme="light"] .config-card .config-field {
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.08);
+}
+body[data-theme="light"] .config-card .config-field input,
+body[data-theme="light"] .config-card .config-field select {
+  background: rgba(255,255,255,0.9);
+  color: var(--light-text);
+  border-color: rgba(0,0,0,0.1);
+}
+body[data-theme="light"] .config-card .config-field input::placeholder {
+  color: rgba(0,0,0,0.45);
+}
+body[data-theme="light"] .config-card .config-unit {
+  background: rgba(0,212,255,0.1);
+}
+
+/* Responsividade dos campos de Configurações */
+@media (min-width: 760px) {
+  .config-card .config-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+  .config-card .config-field {
+    grid-column: span 1;
+  }
+  /* Campos que já agrupam label+input+unidade permanecem individuais */
+}
+
+/* Lista de usuários (Gerenciamento) */
+#userList { list-style: none; padding-left: 0 !important; }
+#userList .user-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 0.6rem 0.8rem;
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#userList .user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+#userList .user-name {
+  color: var(--dark-text);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#userList .user-role-select {
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--dark-text);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 0.35rem 0.6rem;
+}
+#userList .user-remove-btn {
+  background: rgba(230,57,70,0.15);
+  color: #fff;
+  border: 1px solid rgba(230,57,70,0.45);
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+}
+body[data-theme="light"] #userList .user-name { color: var(--light-text); }
+body[data-theme="light"] #userList .user-role-select {
+  background: rgba(255,255,255,0.9);
+  color: var(--light-text);
+  border-color: rgba(0,0,0,0.1);
+}
+body[data-theme="light"] #userList .user-item {
+  border-bottom-color: rgba(0,0,0,0.08);
+}
+
+/* Em telas muito pequenas, evitar que a unidade aperte o input */
+@media (max-width: 420px) {
+  .config-card .config-field {
+    grid-template-columns: 1fr;
+  }
+  .config-card .config-unit {
+    justify-self: start;
+    margin-top: -0.2rem;
+  }
+}
+
+/* FORMS (Seção Placas) */
+form#placaForm {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+}
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.form-row label {
+  font-weight: 600;
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.form-row input,
+.form-row select {
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--dark-text);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  outline: none;
+  transition: box-shadow 0.2s, border 0.2s, background 0.2s;
+}
+.form-row input::placeholder {
+  color: rgba(255,255,255,0.55);
+}
+.form-row input:focus,
+.form-row select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.15);
+  background: rgba(0,0,0,0.4);
+}
+.input-with-unit {
+  position: relative;
+}
+.input-with-unit .unit {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary);
+  font-weight: 700;
+  background: rgba(0,212,255,0.12);
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  pointer-events: none;
+}
+.field-hint {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.9rem;
+}
+.field-error {
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+.field-success {
+  color: var(--success);
+  font-weight: 600;
+}
+
+body[data-theme="light"] form#placaForm {
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.08);
+}
+body[data-theme="light"] .form-row input,
+body[data-theme="light"] .form-row select {
+  background: rgba(255,255,255,0.9);
+  color: var(--light-text);
+  border-color: rgba(0,0,0,0.1);
+}
+body[data-theme="light"] .form-row input::placeholder {
+  color: rgba(0,0,0,0.45);
+}
+body[data-theme="light"] .input-with-unit .unit {
+  background: rgba(0,212,255,0.1);
+}
+
 /* TABELA DE PLACAS */
 #placaTable {
   width: 100%;
@@ -428,6 +716,16 @@ body[data-theme="light"] .btn-exportar:hover {
 }
 
 .btn-edit-placa, .btn-remove-placa {
+  margin-right: 0.5rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.95rem;
+}
+.btn-toggle-placa, .btn-dup-placa {
+  margin-right: 0.5rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.95rem;
+}
+.btn-details-placa {
   margin-right: 0.5rem;
   padding: 0.4rem 1rem;
   font-size: 0.95rem;
@@ -765,6 +1063,11 @@ body[data-theme="light"] .weather-stat {
   font-weight: bold;
   transition: 0.3s;
 }
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(30%);
+}
 
 .btn-primary:hover {
   background: #00b4d8;
@@ -791,6 +1094,98 @@ body[data-theme="light"] .btn-secondary {
 
 body[data-theme="light"] .btn-secondary:hover {
   background: rgba(0, 0, 0, 0.1);
+}
+
+/* Backup/Restauração – container e botões elegantes e compactos */
+.config-card:has(.card-header i.fa-database) {
+  position: relative;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid rgba(0,212,255,0.12);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(0,212,255,0.06) 0%, rgba(67,97,238,0.05) 100%);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  backdrop-filter: blur(2px);
+}
+.config-card:has(.card-header i.fa-database) .card-header h3 {
+  font-size: 1rem;
+  margin-bottom: 0.35rem;
+  position: relative;
+}
+.config-card:has(.card-header i.fa-database) .card-header h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 54px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary) 0%, rgba(67,97,238,0.8) 100%);
+  border-radius: 2px;
+  opacity: 0.8;
+}
+.config-card:has(.card-header i.fa-database) .card-header h3 i {
+  font-size: 0.95em;
+}
+.config-card:has(.card-header i.fa-database) .config-fields {
+  grid-template-columns: repeat(2, auto);
+  gap: 0; /* sem gap para aproximar ao máximo */
+  align-items: center;
+}
+.config-card:has(.card-header i.fa-database) .config-fields::before {
+  content: "Exportar / Importar";
+  grid-column: 1 / -1;
+  font-size: 0.78rem;
+  letter-spacing: 0.3px;
+  opacity: 0.75;
+  margin-bottom: 0.15rem;
+}
+
+/* Botões circulares icônicos */
+#backupBtn,
+#restoreBtn {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  line-height: 1;
+  border: none;
+  background: linear-gradient(135deg, rgba(0,212,255,0.22) 0%, rgba(67,97,238,0.3) 100%);
+  box-shadow: 0 4px 14px rgba(0,212,255,0.16);
+}
+#backupBtn i, #restoreBtn i { color: var(--primary); }
+#backupBtn:hover, #restoreBtn:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, rgba(0,212,255,0.3) 0%, rgba(67,97,238,0.36) 100%);
+  box-shadow: 0 6px 18px rgba(0,212,255,0.22);
+}
+#backupBtn:active, #restoreBtn:active { transform: translateY(0); }
+#backupBtn:focus-visible, #restoreBtn:focus-visible {
+  outline: 2px solid rgba(0,212,255,0.5);
+  outline-offset: 2px;
+}
+
+/* Alinhamento e proximidade dentro do card de backup */
+.config-card:has(.card-header i.fa-database) #backupBtn,
+.config-card:has(.card-header i.fa-database) #restoreBtn {
+  grid-column: auto;
+  justify-self: start;
+}
+.config-card:has(.card-header i.fa-database) #backupBtn { margin-right: 0; }
+
+/* Light theme tweaks specifically for backup card */
+body[data-theme="light"] .config-card:has(.card-header i.fa-database) {
+  border-color: rgba(0,0,0,0.08);
+  background: linear-gradient(180deg, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.02) 100%);
+}
+body[data-theme="light"] #backupBtn i,
+body[data-theme="light"] #restoreBtn i { color: #2b6cb0; }
+
+/* Preserva o espaçamento padrão nas outras cards de configurações */
+.config-card:not(:has(.card-header i.fa-database)) .config-fields {
+  row-gap: 1.5rem;
 }
 
 /* BOTÃO LIMPAR ALERTAS */
@@ -1333,3 +1728,106 @@ body[data-theme="light"] .placa-mini-select {
   margin-left: 0.3rem;
   filter: drop-shadow(0 0 2px #00d4ff44);
 }
+
+/* ===== Ajuda & Suporte – botão flutuante e painel ===== */
+.support-fab {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(0,212,255,0.9), rgba(67,97,238,0.9));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.28), 0 0 0 3px rgba(0,212,255,0.2);
+  cursor: pointer;
+  z-index: 1100;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.support-fab:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,0.32), 0 0 0 3px rgba(0,212,255,0.28); }
+.support-fab:focus-visible { outline: 3px solid rgba(0,212,255,0.55); outline-offset: 3px; }
+.support-fab .support-badge {
+  position: absolute;
+  top: -4px;
+  right: -2px;
+  background: var(--danger);
+  color: #fff;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.7rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.support-panel {
+  position: fixed;
+  right: 22px;
+  bottom: 88px;
+  width: 260px;
+  background: #1e1f35cc;
+  color: #e7e9f3;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  box-shadow: 0 12px 34px rgba(0,0,0,0.4);
+  z-index: 1100;
+  overflow: hidden;
+  backdrop-filter: blur(8px) saturate(120%);
+}
+body[data-theme="light"] .support-panel { background: #ffffffee; color: #1b1c2d; border-color: rgba(0,0,0,0.08); backdrop-filter: blur(6px) saturate(120%); }
+.support-header { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:12px 14px; background: linear-gradient(90deg, rgba(0,212,255,0.18), rgba(67,97,238,0.18)); border-bottom: 1px solid rgba(255,255,255,0.12); }
+body[data-theme="light"] .support-header { background: rgba(0,0,0,0.04); }
+.support-header .support-close { background: transparent; color: inherit; border: none; font-size: 1.2rem; cursor: pointer; }
+.support-body { display:grid; grid-template-columns: 1fr; gap:10px; padding:14px; }
+.support-intro { font-size: 0.92rem; opacity: 0.9; padding: 8px 10px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); }
+.support-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 600;
+  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+body[data-theme="light"] .support-action { border-color: rgba(0,0,0,0.08); background: rgba(0,0,0,0.03); }
+.support-action:hover { transform: translateY(-2px); background: rgba(255,255,255,0.1); box-shadow: 0 6px 16px rgba(0,0,0,0.25); border-color: rgba(0,212,255,0.35); }
+body[data-theme="light"] .support-action:hover { background: rgba(0,0,0,0.06); }
+
+/* Ação principal (Abrir chamado) */
+.support-action.primary {
+  background: linear-gradient(90deg, var(--primary) 60%, var(--info) 100%);
+  color: #111;
+  border-color: var(--primary);
+  box-shadow: 0 4px 14px rgba(0,212,255,0.22);
+}
+.support-action.primary:hover {
+  background: linear-gradient(90deg, var(--info) 50%, var(--primary) 100%);
+  box-shadow: 0 6px 18px rgba(0,212,255,0.28);
+}
+
+/* Indicador de status no cabeçalho */
+.support-status { display:inline-flex; align-items:center; gap:8px; font-size:0.85rem; opacity:0.9; }
+.support-status .dot { width:8px; height:8px; border-radius:50%; background:#2ecc71; box-shadow:0 0 0 3px rgba(46,204,113,0.18); }
+body[data-theme="light"] .support-status .dot { box-shadow:0 0 0 3px rgba(46,204,113,0.22); }
+
+/* Interações adicionais */
+.support-action i { transition: transform 0.15s ease; }
+.support-action:hover i { transform: scale(1.1); }
+.support-action:active { transform: translateY(0); }
+
+/* Animação de abertura/fechamento do painel */
+.support-panel { opacity: 0; transform: translateY(8px); pointer-events: none; transition: transform 0.22s ease, opacity 0.22s ease; }
+.support-panel.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+/* Estado ativo do FAB */
+.support-fab.active { transform: translateY(-2px) scale(1.04); box-shadow: 0 12px 28px rgba(0,0,0,0.32), 0 0 0 3px rgba(0,212,255,0.32); }

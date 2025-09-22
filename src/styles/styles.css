@@ -1,3 +1,18 @@
+/* Make hero-media adapt height when showing the mock-browser preview */
+.hero-media:has(.mock-browser) {
+  height: auto;
+  overflow: visible;
+  background: transparent;
+}
+.hero-media:has(.mock-browser)::before { display: none; }
+
+/* Ensure responsive overrides don't re-impose fixed heights */
+@media (max-width: 1200px) {
+  .hero-media:has(.mock-browser) { height: auto; }
+}
+@media (max-width: 900px) {
+  .hero-media:has(.mock-browser) { height: auto; }
+}
 /* ==========================================
    SMARTSOLAR - DESIGN MODERNO E INOVADOR
    ========================================== */
@@ -536,6 +551,30 @@ body {
 
 .btn:hover i {
   transform: translateX(-3px);
+}
+
+/* Hero CTA variants */
+.btn-hero {
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: 14px;
+  letter-spacing: 0.2px;
+  box-shadow: var(--shadow-lg);
+}
+.btn-hero i { font-size: 1.05rem; }
+.hero .btn-hero { margin-top: 8px; }
+.btn-hero.btn-primary { background: var(--gradient-primary); }
+.btn-hero.btn-secondary { background: var(--gradient-sunset); }
+.btn-hero.btn-outline {
+  background: rgba(255,255,255,0.9);
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+.btn-hero:hover { transform: translateY(-6px) scale(1.02); }
+.btn-hero:active { transform: translateY(-1px); }
+.btn-hero:focus-visible {
+  outline: 3px solid rgba(0,212,170,0.5);
+  outline-offset: 2px;
 }
 
 /* ==========================================
@@ -1496,6 +1535,36 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ========== Mock Browser (Dashboard Preview) ========== */
+.mock-browser {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  background: #0f1420;
+  border: 1px solid rgba(255,255,255,0.08);
+  position: relative;
+  z-index: 2;
+}
+.mock-browser-bar {
+  display:flex; align-items:center; gap:8px;
+  height: 32px; padding: 0 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.mock-url { margin-left: auto; padding: 6px 10px; font-size: 0.82rem; opacity: 0.85; color: #dfe7ff; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: 8px; }
+.mock-browser-bar .dot { width: 10px; height: 10px; border-radius: 50%; display:inline-block; }
+.mock-browser-bar .dot.red { background:#ff5f56; }
+.mock-browser-bar .dot.yellow { background:#ffbd2e; }
+.mock-browser-bar .dot.green { background:#27c93f; }
+.mock-browser-frame { width: 100%; aspect-ratio: 16/9; border: 0; background: #0a0f1a; }
+.mock-browser-frame { pointer-events: none; filter: saturate(1.1) contrast(1.02); }
+/* Static image alternative (fits fully) */
+.mock-browser-img { width: 100%; height: auto; display: block; }
+@media (max-width: 768px) {
+  .mock-browser-frame { aspect-ratio: 4/3; }
 }
 
 @keyframes slide-up-card {
