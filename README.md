@@ -7,3 +7,7 @@ O projeto SmartSolar torna a energia solar mais acessível e inteligente, usando
 ✅ - **HTML** 
 ✅ - **CSS** 
 ✅ - **JavaScript** 
+
+## 📦 Changelog
+
+Consulte o arquivo [`CHANGELOG.md`](CHANGELOG.md) para ver a lista de mudanças recentes.
