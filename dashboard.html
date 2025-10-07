@@ -86,6 +86,7 @@
           <span>28°C • <i class="fas fa-tint" title="Umidade"></i> 45%</span>
         </div>
   <button id="darkToggle" class="theme-toggle">🌙</button>
+        
         <span id="headerTime" style="margin-left:1rem;font-weight:600;color:#00d4ff;font-size:1.1rem;border:2px solid #00d4ff;border-radius:8px;padding:0.3rem 1rem;display:inline-flex;align-items:center;gap:0.5rem;background:#18192b;">
           <i class="fas fa-clock" style="color:#00d4ff;font-size:1.1rem;"></i>
           <span id="headerTimeValue"></span>
@@ -124,6 +125,7 @@
               <h3>Geração Atual</h3>
               <p id="powerNow">0.0 kW</p>
               <span class="kpi-trend up"><i class="fas fa-arrow-up"></i> 12%</span>
+              <div class="kpi-spark"><canvas id="spark-powerNow"></canvas></div>
             </div>
           </div>
           
@@ -135,6 +137,7 @@
               <h3>Consumo Atual</h3>
               <p id="loadNow">0.0 kW</p>
               <span class="kpi-trend down"><i class="fas fa-arrow-down"></i> 5%</span>
+              <div class="kpi-spark"><canvas id="spark-loadNow"></canvas></div>
             </div>
           </div>
           
@@ -146,6 +149,7 @@
               <h3>Energia Hoje</h3>
               <p id="energyToday">0.0 kWh</p>
               <span class="kpi-trend up"><i class="fas fa-arrow-up"></i> 8%</span>
+              <div class="kpi-spark"><canvas id="spark-energyToday"></canvas></div>
             </div>
           </div>
           
@@ -157,6 +161,7 @@
               <h3>Economia Diária</h3>
               <p id="revenueToday">R$ 0,00</p>
               <span class="kpi-trend up"><i class="fas fa-arrow-up"></i> 15%</span>
+              <div class="kpi-spark"><canvas id="spark-revenueToday"></canvas></div>
             </div>
           </div>
         </div>
@@ -289,6 +294,7 @@
         </div>
       </section>
 
+
       <!-- CLIMA -->
       <section id="section-clima" hidden>
         <h2>🌤️ Condições Climáticas</h2>
@@ -419,7 +425,7 @@
         <h2>🚨 Alertas</h2>
         <table id="alertsTable">
           <thead>
-            <tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Nível</th></tr>
+            <tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Nível</th><th data-col="actions">Ações</th></tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -560,23 +566,7 @@
       </section>
     </main>
 
-    <!-- Ajuda & Suporte - Botão flutuante -->
-    <div id="supportFab" class="support-fab" role="button" tabindex="0" aria-haspopup="true" aria-controls="supportPanel" aria-label="Ajuda e Suporte">
-      <i class="fas fa-comment-dots" aria-hidden="true"></i>
-      <span class="support-badge" id="supportBadge" aria-hidden="true">1</span>
-    </div>
-    <div id="supportPanel" class="support-panel" hidden>
-      <div class="support-header">
-        <span id="supportHeaderTitle"><i class="fas fa-life-ring"></i> Ajuda e Suporte</span>
-        <div class="support-status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span class="text" id="supportStatusText">Online</span></div>
-        <button class="support-close" id="supportClose" aria-label="Fechar suporte">&times;</button>
-      </div>
-      <div class="support-body">
-        <div class="support-intro" id="supportIntroText">Como podemos ajudar hoje?</div>
-        <button class="support-action" id="supportWhatsApp"><i class="fab fa-whatsapp"></i> <span class="label">WhatsApp</span></button>
-        <button class="support-action primary" id="supportTicket"><i class="fas fa-ticket-alt"></i> <span class="label">Abrir chamado</span></button>
-      </div>
-    </div>
+    
 
     <footer>
       <footer style="width:100%; position:fixed; left:0; bottom:0; background:#1e1e2f; color:#00d4ff; text-align:center; padding:1rem 0; font-size:1.1rem; letter-spacing:0.5px; z-index:999;">
@@ -696,5 +686,11 @@
       };
     });
   </script>
+  <!-- Minimal Ticket FAB (bottom-right) -->
+  <button id="openTicketFab" class="ticket-fab" aria-label="Abrir chamado" title="Abrir chamado">
+    <span id="ticketFabBadge" class="badge" aria-hidden="true"></span>
+    <i class="fas fa-ticket-alt" aria-hidden="true"></i>
+  </button>
+  
 </body>
 </html>

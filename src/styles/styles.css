@@ -1,17 +1,39 @@
-/* Make hero-media adapt height when showing the mock-browser preview */
-.hero-media:has(.mock-browser) {
-  height: auto;
-  overflow: visible;
+/* Hero: keep consistent height across slides and make mock-browser fill it */
+.hero .hero-media:has(.mock-browser) {
+  height: 500px; /* match default .hero-media */
+  overflow: hidden;
   background: transparent;
 }
-.hero-media:has(.mock-browser)::before { display: none; }
+.hero .hero-media:has(.mock-browser)::before { display: none; }
 
-/* Ensure responsive overrides don't re-impose fixed heights */
+/* Make the mock-browser preview stretch to container height */
+.hero .hero-media .mock-browser {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.hero .hero-media .mock-browser-bar {
+  flex: 0 0 32px; /* matches declared height */
+}
+.hero .hero-media .mock-browser-img {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Responsive hero height harmonized (image and mock-browser) */
 @media (max-width: 1200px) {
-  .hero-media:has(.mock-browser) { height: auto; }
+  .hero .hero-media,
+  .hero .hero-media:has(.mock-browser) { height: 420px; }
 }
 @media (max-width: 900px) {
-  .hero-media:has(.mock-browser) { height: auto; }
+  .hero .hero-media,
+  .hero .hero-media:has(.mock-browser) { height: 360px; }
+}
+@media (max-width: 600px) {
+  .hero .hero-media,
+  .hero .hero-media:has(.mock-browser) { height: 300px; }
 }
 /* ==========================================
    SMARTSOLAR - DESIGN MODERNO E INOVADOR
@@ -72,6 +94,18 @@
   --font-display: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+/* Modo performance reduzida (injetado por data-perf-lite no <html>) */
+html[data-perf-lite='1'] * {
+  animation-duration: 0.001s !important;
+  animation-iteration-count: 1 !important;
+  transition: none !important;
+}
+html[data-perf-lite='1'] .particles-container { display:none !important; }
+html[data-perf-lite='1'] .hero-content::before { animation: none !important; transform: scaleY(1); }
+html[data-perf-lite='1'] .slide { transition: none !important; }
+html[data-perf-lite='1'] .hero-content h1,
+html[data-perf-lite='1'] .hero-content p { animation: none !important; opacity:1 !important; transform:none !important; }
 
 /* Reset e estilos base melhorados */
 * {
@@ -286,6 +320,8 @@ body {
   opacity: 0;
   transform: translateX(100px);
   transition: all 0.8s cubic-bezier(0.23, 1, 0.320, 1);
+  /* Prevent invisible slides from blocking clicks on the active slide */
+  pointer-events: none;
 }
 
 .slide.active {
@@ -293,6 +329,7 @@ body {
   transform: translateX(0);
   position: relative;
   height: auto;
+  pointer-events: auto;
 }
 
 .hero-content {
@@ -304,6 +341,8 @@ body {
   backdrop-filter: blur(10px);
   position: relative;
   overflow: hidden;
+  /* Match media height (accounting for 60px top + 60px bottom padding) */
+  min-height: 380px; /* 500px - 120px padding */
 }
 
 .hero-content::before {
@@ -346,6 +385,10 @@ body {
   animation: slide-up 0.8s ease-out 0.4s forwards;
 }
 
+/* Reset default figure spacing and ensure image fills without baseline gap */
+.hero .hero-media { margin: 0; }
+.hero .hero-media img { display: block; }
+
 .hero-media {
   height: 500px;
   overflow: hidden;
@@ -365,12 +408,27 @@ body {
 }
 
 .hero-media img {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
   transition: transform 0.8s ease-out;
   filter: contrast(1.1) saturate(1.2);
+}
+
+/* Specific adjustment for the first hero image to improve composition */
+.hero-img-ajuste {
+  /* Anchor focus to bottom area to avoid any white bar at the bottom */
+  object-position: center 85%;
+}
+@media (max-width: 900px) {
+  .hero-img-ajuste { object-position: center 78%; }
+}
+@media (max-width: 600px) {
+  .hero-img-ajuste { object-position: center 88%; }
 }
 
 .slide.active .hero-media img {
@@ -1563,20 +1621,6 @@ body {
 .mock-browser-frame { pointer-events: none; filter: saturate(1.1) contrast(1.02); }
 /* Static image alternative (fits fully) */
 .mock-browser-img { width: 100%; height: auto; display: block; }
-@media (max-width: 768px) {
-  .mock-browser-frame { aspect-ratio: 4/3; }
-}
-
-@keyframes slide-up-card {
-  from {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 @keyframes expand-line {
   from {
@@ -1604,6 +1648,84 @@ body {
     transform: scale(1);
   }
 }
+
+/* Animation used by .card.in-view to reveal Services cards */
+@keyframes slide-up-card {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= Ticket Widget (Floating) ================= */
+.ticket-launcher {
+  position: fixed;
+  right: 22px;
+  bottom: 86px; /* support above */
+  z-index: 1100;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--gradient-primary);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 16px 24px;
+  font-weight: 800;
+  font-size: 1.02rem;
+  box-shadow: var(--shadow-xl);
+  cursor: pointer;
+}
+.whatsapp-launcher {
+  right: 22px;
+  bottom: 22px; /* whatsapp below */
+  background: #25D366;
+}
+.whatsapp-launcher:hover { filter: brightness(1.05); }
+.ticket-launcher i { font-size: 1.1rem; }
+.ticket-launcher:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,0,0,.18); }
+
+.ticket-widget {
+  position: fixed;
+  right: 22px;
+  bottom: 214px; /* lifted to clear launchers (86 + btn height) */
+  width: min(360px, calc(100vw - 44px));
+  background: #fff;
+  color: var(--text);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  border: 1px solid rgba(0,0,0,0.06);
+  overflow: hidden;
+  transform: translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--transition-normal);
+  z-index: 1100;
+}
+.ticket-widget.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.ticket-header { display:flex; align-items:center; justify-content:space-between; padding: 12px 14px; background: var(--gradient-primary); color:#fff; }
+.ticket-title { font-weight: 800; letter-spacing: .3px; display:flex; align-items:center; gap:8px; }
+.ticket-close { background: transparent; border: 0; color:#fff; cursor:pointer; font-size:1.1rem; }
+.ticket-form { display:flex; flex-direction:column; gap:12px; padding: 14px; }
+.ticket-form label { display:flex; flex-direction:column; gap:6px; font-weight:600; font-size:.95rem; }
+.ticket-form input, .ticket-form select, .ticket-form textarea { border:1px solid #e6e8ee; border-radius:10px; padding:10px 12px; font-size:.98rem; outline:none; }
+.ticket-form input:focus, .ticket-form select:focus, .ticket-form textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,212,170,.15); }
+.ticket-actions { display:flex; gap:10px; align-items:center; justify-content:flex-end; }
+.ticket-cancel { color: var(--text); border-color: rgba(0,0,0,.12); }
+.ticket-disclaimer { color: var(--text-light); font-size: .85rem; margin-top: 4px; }
+.ticket-protocol { background: #f6f9ff; border-left: 4px solid var(--primary); padding: 10px 12px; border-radius: 8px; color: #1c274c; font-weight: 600; }
+
+@media (max-width: 560px) {
+  .ticket-launcher span { display: none; }
+}
+
+/* Emphasize Support over WhatsApp */
+#ticketLauncher { padding: 18px 26px; font-size: 1.08rem; }
+.whatsapp-launcher { padding: 12px 18px; font-weight: 700; font-size: 0.95rem; }
 
 @keyframes float-particles {
   0% {

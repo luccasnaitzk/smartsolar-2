@@ -1,5 +1,6 @@
 // Menu mobile toggle - Versão atualizada para submenus
 document.addEventListener('DOMContentLoaded', function() {
+    const PERF_LITE = document.documentElement.getAttribute('data-perf-lite') === '1';
     const navToggle = document.querySelector('.nav-toggle');
     if (navToggle) {
         navToggle.addEventListener('click', function() {
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
         threshold: 0.1
     };
     
-    if ('IntersectionObserver' in window) {
+    if (!PERF_LITE && 'IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -79,32 +80,49 @@ document.addEventListener('DOMContentLoaded', function() {
     const statsSection = document.querySelector('.stats');
     
     if (statsSection && stats.length) {
-        const statsObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    stats.forEach(stat => {
-                        const target = parseInt(stat.getAttribute('data-count'));
-                        const duration = 2000;
-                        const step = target / (duration / 16);
-                        let current = 0;
-                        
-                        const timer = setInterval(() => {
-                            current += step;
-                            if (current >= target) {
-                                clearInterval(timer);
-                                stat.textContent = target;
-                            } else {
-                                stat.textContent = Math.floor(current);
-                            }
-                        }, 16);
-                    });
-                    
-                    statsObserver.unobserve(entry.target);
+        const animateStats = (light=false) => {
+            stats.forEach(stat => {
+                const target = parseInt(stat.getAttribute('data-count'));
+                if (isNaN(target)) return;
+                if (light) { // modo leve: incremento em steps maiores e duração curta
+                    const duration = 800;
+                    const step = Math.max(1, Math.round(target / (duration / 50))); // ~20 frames
+                    let current = 0;
+                    const timer = setInterval(() => {
+                        current += step;
+                        if (current >= target) { current = target; clearInterval(timer); stat.textContent = current + '+'; }
+                        else stat.textContent = current;
+                    }, 50);
+                } else {
+                    const duration = 2000;
+                    const step = target / (duration / 16);
+                    let current = 0;
+                    const timer = setInterval(() => {
+                        current += step;
+                        if (current >= target) {
+                            clearInterval(timer);
+                            stat.textContent = target + '+';
+                        } else {
+                            stat.textContent = Math.floor(current);
+                        }
+                    }, 16);
                 }
             });
-        }, { threshold: 0.5 });
-        
-        statsObserver.observe(statsSection);
+        };
+        if (!PERF_LITE && 'IntersectionObserver' in window) {
+            const statsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateStats(false);
+                        statsObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            statsObserver.observe(statsSection);
+        } else {
+            // Modo performance-lite ou sem IntersectionObserver: dispara após pequeno delay para garantir layout pronto
+            setTimeout(() => animateStats(true), 300);
+        }
     }
     
     // Adicionar classe de animação aos elementos quando eles aparecem na tela
@@ -169,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (prevBtn) prevBtn.addEventListener('click', prevSlide);
         
         // Auto slide
-        setInterval(nextSlide, 5000);
+        if (!PERF_LITE) setInterval(nextSlide, 5000);
     }
     
     // Testimonial Slider functionality
@@ -213,6 +231,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Event listeners
         if (testimonialNextBtn) testimonialNextBtn.addEventListener('click', nextTestimonial);
         if (testimonialPrevBtn) testimonialPrevBtn.addEventListener('click', prevTestimonial);
+        // Evita timers contínuos em máquinas lentas
+        if (!PERF_LITE) setInterval(nextTestimonial, 6500);
     }
     
     // Form submission handling

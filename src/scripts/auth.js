@@ -131,17 +131,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('userLastAccess', now.toLocaleString());
 
                 // Verificar se há nome no cadastro
-                const userName = localStorage.getItem('userName');
-                // Não sobrescreve o nome completo se já existir
-                if (!userName || userName === email.split('@')[0]) {
-                    // Tenta recuperar nome do cadastro salvo
-                    const users = JSON.parse(localStorage.getItem('users') || '{}');
-                    if (users[email] && users[email].name) {
-                        localStorage.setItem('userName', users[email].name);
-                    } else {
-                        localStorage.setItem('userName', email.split('@')[0]);
-                    }
-                }
+                // Sempre ajusta o nome exibido conforme cadastro salvo; fallback para prefixo do e-mail
+                const nameFromUsers = stored && stored.name ? stored.name : (email.split('@')[0]);
+                localStorage.setItem('userName', nameFromUsers);
 
                 alert('Login realizado com sucesso!');
                 authModal.classList.remove('active');
