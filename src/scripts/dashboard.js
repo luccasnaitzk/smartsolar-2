@@ -28,6 +28,28 @@
 
   /* --------------------- UTIL --------------------- */
   function $(id) { return document.getElementById(id); }
+  // ---------- Proteção de acesso: exige login válido no backend ----------
+  async function requireBackendAuth() {
+    const email = localStorage.getItem('userEmail');
+    if (!email) {
+      location.href = 'auth.html'; return false;
+    }
+    // Aguarda remote.js sinalizar pronto (até 1.2s)
+    const wait = () => new Promise(r=>{
+      const s=Date.now(); (function t(){ if (window.API_READY===true||Date.now()-s>1200) return r(); setTimeout(t,60); })();
+    });
+    await wait();
+    if (!window.API_BASE) { location.href = 'auth.html'; return false; }
+    try {
+      const res = await fetch(window.API_BASE + '/users/get.php', {
+        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email })
+      });
+      if (!res.ok) throw new Error('auth');
+      const j = await res.json();
+      if (!j || !j.user) { location.href = 'auth.html'; return false; }
+      return true;
+    } catch { location.href = 'auth.html'; return false; }
+  }
   function safeNumber(v, d = 0) { const n = parseFloat(v); return isNaN(n) ? d : n; }
   function clamp01(x) { return Math.max(0, Math.min(1, x)); }
   function rand(a, b) { return a + Math.random() * (b - a); }
@@ -362,6 +384,8 @@
       atualizarCards();
       updatePlacasDoughnut();
       refreshAnalisesImmediate();
+      // Sincroniza com backend, se disponível
+      if (typeof syncPlacasRemoteDebounced === 'function') syncPlacasRemoteDebounced();
       closeModalById('editPlacaModal');
     };
   }
@@ -818,6 +842,8 @@
         updatePlacasDoughnut();
         refreshAnalisesImmediate();
         SS.els.placaForm.reset();
+        // Sincroniza com backend, se disponível
+        if (typeof syncPlacasRemoteDebounced === 'function') syncPlacasRemoteDebounced();
       });
     }
     // Busca usuários
@@ -1096,9 +1122,13 @@
   }
 
   /* --------------------- INIT --------------------- */
-  function init() {
+  async function init() {
   if (SS.inited) return;
   SS.inited = true;
+
+  // Bloqueia acesso se não autenticado no backend
+  const ok = await requireBackendAuth();
+  if (!ok) return;
 
   cacheElements();
   initPlacasDefault();

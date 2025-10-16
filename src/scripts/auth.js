@@ -28,12 +28,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     
-    // Verificar se o usuário já está logado
-    const isLoggedIn = localStorage.getItem('userLoggedIn');
-    const path = window.location.pathname;
-    if (isLoggedIn === 'true' && (path.endsWith('index.html') || path.endsWith('/index') || path.endsWith('auth.html'))) {
-        window.location.href = 'dashboard.html';
-    }
+        // Verificar sessão somente se for válida no backend
+        (async function strictRedirectGuard(){
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const email = localStorage.getItem('userEmail') || '';
+            const path = window.location.pathname;
+            const onGateway = /(?:index\.html?$|\/index$|auth\.html?$)/i.test(path);
+            if (!isLoggedIn || !onGateway) return;
+            // Aguarda autodetecção da API
+            const wait = () => new Promise(r=>{ const s=Date.now(); (function t(){ if (window.API_READY===true||Date.now()-s>1200) return r(); setTimeout(t,60); })(); });
+            await wait();
+            if (!window.API_BASE) return; // sem API não redireciona
+            try {
+                const res = await fetch(window.API_BASE + '/users/get.php', {
+                    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email })
+                });
+                const j = res.ok ? await res.json() : null;
+                if (j && j.user) window.location.href = 'dashboard.html';
+                else {
+                    // sessão inválida; limpa e permanece
+                    localStorage.removeItem('userLoggedIn');
+                }
+            } catch {}
+        })();
     
     // Abrir modal de autenticação
     if (authBtn) {
@@ -101,6 +118,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
+            // Se API estiver ativa, não usar fallback local
+            if (window.API_BASE) return;
             e.preventDefault();
             
             const email = document.getElementById('loginEmail').value;
@@ -143,6 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                 
                 // Redirecionar para o dashboard
+                // Fallback local: permitido apenas quando API está desligada (modo demo)
                 window.location.href = 'dashboard.html';
             }, 800);
         });
@@ -152,6 +172,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
         registerForm.addEventListener('submit', function(e) {
+            // Se API estiver ativa, não usar fallback local
+            if (window.API_BASE) return;
             e.preventDefault();
             
             const name = document.getElementById('registerName').value;
@@ -198,6 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                 
                 // Redirecionar para o dashboard
+                // Fallback local: permitido apenas quando API está desligada (modo demo)
                 window.location.href = 'dashboard.html';
             }, 800);
         });
@@ -360,6 +383,18 @@ document.addEventListener('DOMContentLoaded', function() {
 (function () {
   const API = () => (typeof window.API_BASE === 'string' && window.API_BASE) ? window.API_BASE : null;
 
+    function waitForApiReady(maxMs = 1200) {
+        // Aguarda a autodetecção do remote.js finalizar (API_READY) ou até o timeout
+        return new Promise(resolve => {
+            const start = Date.now();
+            const tick = () => {
+                if (window.API_READY === true || Date.now() - start >= maxMs) return resolve(!!API());
+                setTimeout(tick, 60);
+            };
+            tick();
+        });
+    }
+
   async function api(path, payload) {
     const res = await fetch(API() + path, {
       method: 'POST',
@@ -382,46 +417,59 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.setItem('userLastAccess', new Date().toISOString());
   }
 
-  async function remoteRegister(name, email, password) {
-    const { user } = await api('/auth/register', { name, email, password });
+    async function remoteRegister(name, email, password) {
+        const { user } = await api('/auth/register.php', { name, email, password });
     setLoggedIn(user);
     return user;
   }
 
-  async function remoteLogin(email, password) {
-    const { user } = await api('/auth/login', { email, password });
+    async function remoteLogin(email, password) {
+        const { user } = await api('/auth/login.php', { email, password });
     setLoggedIn(user);
     return user;
   }
 
-  document.addEventListener('submit', async (e) => {
+    document.addEventListener('submit', async (e) => {
     const form = e.target;
-    if (!API()) return; // sem API, mantém fluxo local
-    if (form.id === 'registerForm' || form.matches?.('.register-form')) {
-      e.preventDefault();
-      const name = form.querySelector('#registerName, [name="name"]')?.value?.trim();
-      const email = form.querySelector('#registerEmail, [name="email"]')?.value?.trim();
-      const password = form.querySelector('#registerPassword, [name="password"]')?.value || '';
-      if (!name || !email || !password) return alert('Preencha nome, e-mail e senha.');
-      try {
-        await remoteRegister(name, email, password);
-        location.href = 'dashboard.html';
-      } catch (err) {
-        alert('Erro ao cadastrar: ' + err.message);
-      }
-    }
-    if (form.id === 'loginForm' || form.matches?.('.login-form')) {
-      e.preventDefault();
-      const email = form.querySelector('#loginEmail, [name="email"]')?.value?.trim();
-      const password = form.querySelector('#loginPassword, [name="password"]')?.value || '';
-      if (!email || !password) return alert('Informe e-mail e senha.');
-      try {
-        await remoteLogin(email, password);
-        location.href = 'dashboard.html';
-      } catch (err) {
-        alert('Login falhou: ' + err.message);
-      }
-    }
+        // Espera breve para a autodetecção terminar e evitar cair no modo local por engano
+        if (!API()) {
+            await waitForApiReady();
+        }
+        if (!API()) return; // sem API, mantém fluxo local
+        if (form.id === 'registerForm' || form.matches?.('.register-form')) {
+            e.preventDefault();
+            const name = form.querySelector('#registerName, [name="name"]')?.value?.trim();
+            const email = form.querySelector('#registerEmail, [name="email"]')?.value?.trim();
+            const password = form.querySelector('#registerPassword, [name="password"]')?.value || '';
+            if (!name || !email || !password) return alert('Preencha nome, e-mail e senha.');
+            if (!API()) return alert('Serviço de cadastro indisponível (API offline). Tente novamente mais tarde.');
+            try {
+                await remoteRegister(name, email, password);
+                location.href = 'dashboard.html';
+            } catch (err) {
+                alert('Erro ao cadastrar: ' + err.message);
+            }
+        }
+        if (form.id === 'loginForm' || form.matches?.('.login-form')) {
+            e.preventDefault();
+            const email = form.querySelector('#loginEmail, [name="email"]')?.value?.trim();
+            const password = form.querySelector('#loginPassword, [name="password"]')?.value || '';
+            if (!email || !password) return alert('Informe e-mail e senha.');
+            if (!API()) return alert('Serviço de autenticação indisponível (API offline).');
+            try {
+                await remoteLogin(email, password);
+                location.href = 'dashboard.html';
+            } catch (err) {
+                alert('Login falhou: ' + err.message);
+            }
+        }
   }, true);
+
+    // Diagnóstico: informa no console o modo atual
+    (async () => {
+        await waitForApiReady();
+        if (API()) console.info('[SmartSolar] Modo remoto ON →', API());
+        else console.info('[SmartSolar] Modo local (sem API)');
+    })();
 })();
 });
