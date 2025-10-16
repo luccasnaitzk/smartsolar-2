@@ -168,19 +168,19 @@
     background: var(--header-login-bg);
     color: white;
     border: none;
-    padding: 14px 34px;
-    border-radius: 35px;
+    padding: 16px 40px;
+    border-radius: 40px;
     font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     transition: all 0.35s;
-    box-shadow: 0 6px 20px rgba(0,212,255,0.18);
+    box-shadow: 0 8px 24px rgba(0,212,255,0.22);
     position: relative;
     overflow: hidden;
     text-decoration: none;
-    font-size: 1.08rem;
+    font-size: 1.15rem;
 }
 
 .login-btn:before {
@@ -200,10 +200,12 @@
 
 .login-btn:hover {
     transform: translateY(-4px) scale(1.03);
-    box-shadow: 0 12px 28px rgba(0,212,255,0.22);
+    box-shadow: 0 14px 32px rgba(0,212,255,0.26);
     background: linear-gradient(135deg, #ffb400, #00d4ff);
     color: #23243a;
 }
+
+.login-btn i { font-size: 1.1em; }
 
 .nav-toggle {
     display: none;
@@ -258,6 +260,9 @@
     .login-btn {
         width: 100%;
         justify-content: center;
+        font-size: 1.05rem;
+        padding: 14px 24px;
+        gap: 10px;
     }
 
     .nav_item .submenu {

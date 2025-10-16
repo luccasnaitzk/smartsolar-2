@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar ou Cadastrar - SMARTSOLAR</title>
+  <meta name="description" content="Acesse sua conta ou cadastre-se para usar o SmartSolar.">
+  <link rel="shortcut icon" href="src/images/smartlogo.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/styles/styles.css">
+  <link rel="stylesheet" href="src/styles/auth.css">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(0,212,255,0.12), transparent 60%),
+        radial-gradient(900px 500px at 120% 110%, rgba(58,12,163,0.18), transparent 60%),
+        #0b1020;
+    }
+    .auth-page-wrap {
+      position: relative; padding: 24px; width: 100%; display: flex; align-items: center; justify-content: center;
+    }
+    /* Remove overlay behavior expected by modal */
+    .auth-container { animation: none; transform: none; opacity: 1; }
+    @media (max-width: 640px) {
+      /* ajustes responsivos mantidos sem brand */
+    }
+  </style>
+  <script>
+    (function(){
+      try {
+        var prm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prm) document.documentElement.setAttribute('data-perf-lite','1');
+      } catch(e) {}
+    })();
+  </script>
+</head>
+<body class="auth-glass">
+  <div class="auth-page-wrap">
+    
+
+    <div class="auth-container" role="main" aria-labelledby="authTitle">
+      <div class="auth-header">
+        <div class="auth-avatar" aria-hidden="true"><i class="fas fa-user"></i></div>
+        <h2 id="authTitle">Acesse sua conta</h2>
+        <p class="auth-subtitle">Faça login ou crie sua conta para acessar o dashboard SmartSolar</p>
+      </div>
+      <div class="auth-tabs">
+        <div class="auth-tab active" data-tab="login">Entrar</div>
+        <div class="auth-tab" data-tab="register">Cadastrar</div>
+      </div>
+      <div class="auth-content">
+        <form class="auth-form active login-form" id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail">E-mail</label>
+            <div class="input-wrap">
+              <i class="input-icon fas fa-envelope" aria-hidden="true"></i>
+              <input type="email" id="loginEmail" placeholder="Seu e-mail" required autocomplete="email">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Senha</label>
+            <div class="input-wrap">
+              <i class="input-icon fas fa-lock" aria-hidden="true"></i>
+              <input type="password" id="loginPassword" placeholder="Sua senha" required autocomplete="current-password">
+              <button type="button" class="toggle-pass" aria-label="Mostrar senha" data-target="loginPassword"><i class="fas fa-eye" aria-hidden="true"></i></button>
+            </div>
+          </div>
+          <div class="form-options">
+            <label class="checkbox">
+              <input type="checkbox" id="rememberMe">
+              <span>Lembrar-me</span>
+            </label>
+            <a href="#" class="forgot-password" id="forgotPassword">Esqueci a senha</a>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> Entrar</button>
+        </form>
+
+        <form class="auth-form register-form" id="registerForm">
+          <div class="form-group">
+            <label for="registerName">Nome completo</label>
+            <div class="input-wrap">
+              <i class="input-icon fas fa-user" aria-hidden="true"></i>
+              <input type="text" id="registerName" placeholder="Seu nome completo" required autocomplete="name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="registerEmail">E-mail</label>
+            <div class="input-wrap">
+              <i class="input-icon fas fa-envelope" aria-hidden="true"></i>
+              <input type="email" id="registerEmail" placeholder="Seu e-mail" required autocomplete="email">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="registerPassword">Senha</label>
+            <div class="input-wrap">
+              <i class="input-icon fas fa-lock" aria-hidden="true"></i>
+              <input type="password" id="registerPassword" placeholder="Crie uma senha" required autocomplete="new-password">
+              <button type="button" class="toggle-pass" aria-label="Mostrar senha" data-target="registerPassword"><i class="fas fa-eye" aria-hidden="true"></i></button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="registerConfirmPassword">Confirmar senha</label>
+            <div class="input-wrap">
+              <i class="input-icon fas fa-lock" aria-hidden="true"></i>
+              <input type="password" id="registerConfirmPassword" placeholder="Confirme sua senha" required autocomplete="new-password">
+              <button type="button" class="toggle-pass" aria-label="Mostrar senha" data-target="registerConfirmPassword"><i class="fas fa-eye" aria-hidden="true"></i></button>
+            </div>
+          </div>
+          <div class="form-options">
+            <label class="checkbox">
+              <input type="checkbox" id="acceptTerms" required>
+              <span>Concordo com os <a href="#">termos de uso</a></span>
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-user-plus" aria-hidden="true"></i> Criar conta</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="src/scripts/auth.js"></script>
+  <script>
+    // Toggle de visibilidade de senha (escopo local da página)
+    document.addEventListener('click', function(e){
+      const btn = e.target.closest('.toggle-pass');
+      if (!btn) return;
+      const id = btn.getAttribute('data-target');
+      const input = document.getElementById(id);
+      if (!input) return;
+      const isPwd = input.type === 'password';
+      input.type = isPwd ? 'text' : 'password';
+      const i = btn.querySelector('i');
+      if (i) {
+        i.classList.toggle('fa-eye');
+        i.classList.toggle('fa-eye-slash');
+      }
+      btn.setAttribute('aria-label', isPwd ? 'Ocultar senha' : 'Mostrar senha');
+    });
+  </script>
+</body>
+</html>

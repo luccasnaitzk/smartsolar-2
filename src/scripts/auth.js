@@ -30,7 +30,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Verificar se o usuário já está logado
     const isLoggedIn = localStorage.getItem('userLoggedIn');
-    if (isLoggedIn === 'true' && window.location.pathname.endsWith('index.html')) {
+    const path = window.location.pathname;
+    if (isLoggedIn === 'true' && (path.endsWith('index.html') || path.endsWith('/index') || path.endsWith('auth.html'))) {
         window.location.href = 'dashboard.html';
     }
     
@@ -135,9 +136,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const nameFromUsers = stored && stored.name ? stored.name : (email.split('@')[0]);
                 localStorage.setItem('userName', nameFromUsers);
 
-                alert('Login realizado com sucesso!');
-                authModal.classList.remove('active');
-                document.body.style.overflow = '';
+                                alert('Login realizado com sucesso!');
+                                if (authModal) {
+                                    authModal.classList.remove('active');
+                                    document.body.style.overflow = '';
+                                }
                 
                 // Redirecionar para o dashboard
                 window.location.href = 'dashboard.html';
@@ -188,9 +191,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const now = new Date();
                 localStorage.setItem('userLastAccess', now.toLocaleString());
 
-                alert('Cadastro realizado com sucesso!');
-                authModal.classList.remove('active');
-                document.body.style.overflow = '';
+                                alert('Cadastro realizado com sucesso!');
+                                if (authModal) {
+                                    authModal.classList.remove('active');
+                                    document.body.style.overflow = '';
+                                }
                 
                 // Redirecionar para o dashboard
                 window.location.href = 'dashboard.html';
@@ -351,4 +356,72 @@ document.addEventListener('DOMContentLoaded', function() {
                         openForgotModal(prefill);
                 });
         }
+        // ...existing code...
+(function () {
+  const API = () => (typeof window.API_BASE === 'string' && window.API_BASE) ? window.API_BASE : null;
+
+  async function api(path, payload) {
+    const res = await fetch(API() + path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload || {})
+    });
+    if (!res.ok) {
+      let t = '';
+      try { t = await res.text(); } catch {}
+      throw new Error(t || res.statusText);
+    }
+    return res.json();
+  }
+
+  function setLoggedIn(u) {
+    const name = u.name || (u.email ? u.email.split('@')[0] : 'Usuário');
+    localStorage.setItem('userLoggedIn', 'true');
+    localStorage.setItem('userEmail', u.email);
+    localStorage.setItem('userName', name);
+    localStorage.setItem('userLastAccess', new Date().toISOString());
+  }
+
+  async function remoteRegister(name, email, password) {
+    const { user } = await api('/auth/register', { name, email, password });
+    setLoggedIn(user);
+    return user;
+  }
+
+  async function remoteLogin(email, password) {
+    const { user } = await api('/auth/login', { email, password });
+    setLoggedIn(user);
+    return user;
+  }
+
+  document.addEventListener('submit', async (e) => {
+    const form = e.target;
+    if (!API()) return; // sem API, mantém fluxo local
+    if (form.id === 'registerForm' || form.matches?.('.register-form')) {
+      e.preventDefault();
+      const name = form.querySelector('#registerName, [name="name"]')?.value?.trim();
+      const email = form.querySelector('#registerEmail, [name="email"]')?.value?.trim();
+      const password = form.querySelector('#registerPassword, [name="password"]')?.value || '';
+      if (!name || !email || !password) return alert('Preencha nome, e-mail e senha.');
+      try {
+        await remoteRegister(name, email, password);
+        location.href = 'dashboard.html';
+      } catch (err) {
+        alert('Erro ao cadastrar: ' + err.message);
+      }
+    }
+    if (form.id === 'loginForm' || form.matches?.('.login-form')) {
+      e.preventDefault();
+      const email = form.querySelector('#loginEmail, [name="email"]')?.value?.trim();
+      const password = form.querySelector('#loginPassword, [name="password"]')?.value || '';
+      if (!email || !password) return alert('Informe e-mail e senha.');
+      try {
+        await remoteLogin(email, password);
+        location.href = 'dashboard.html';
+      } catch (err) {
+        alert('Login falhou: ' + err.message);
+      }
+    }
+  }, true);
+})();
 });

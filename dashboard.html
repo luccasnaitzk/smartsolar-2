@@ -589,7 +589,7 @@
   </div>
 
   <!-- Modal Perfil -->
-  <div id="profileModal" class="modal" style="display:flex;align-items:center;justify-content:center;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;">
+  <div id="profileModal" class="modal" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;">
       <span id="closeProfile" class="close">&times;</span>
       <div id="profileView">
         <div class="profile-header">
@@ -604,7 +604,7 @@
         </div>
         <button id="editProfileBtn" class="btn-primary">Editar Perfil</button>
       </div>
-  <div id="profileEdit" class="hidden" style="padding: 24px 16px; background: #23243a; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.18); max-width: 350px; margin: 0 auto;">
+  <div id="profileEdit" class="hidden" style="padding: 24px 16px; background: #23243a; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.18); max-width: 420px; width: 100%; margin: 0 auto;">
   <h3 style="text-align:center; color:#00d4ff; font-weight:600; margin-bottom:18px;">Editar Perfil</h3>
         <div class="form-group" style="display:flex; flex-direction:column; align-items:center; margin-bottom:18px;">
           <label style="font-weight:500; margin-bottom:6px; color:#fff;">Foto de Perfil:</label>
@@ -647,12 +647,18 @@
       var closeProfile = document.getElementById('closeProfile');
 
       function showView() {
+        // Exibe apenas a visualização
         profileView.classList.remove('hidden');
         profileEdit.classList.add('hidden');
       }
       function showEdit() {
-        profileView.classList.add('hidden');
+        // Mantém a visualização e mostra o card de edição logo abaixo
+        profileView.classList.remove('hidden');
         profileEdit.classList.remove('hidden');
+        // Garante que o edit fique logo abaixo do perfil
+        if (profileView.nextElementSibling !== profileEdit) {
+          profileView.parentNode.insertBefore(profileEdit, profileView.nextSibling);
+        }
       }
 
       // Ao abrir o modal, mostrar apenas a visualização
@@ -691,6 +697,12 @@
     <span id="ticketFabBadge" class="badge" aria-hidden="true"></span>
     <i class="fas fa-ticket-alt" aria-hidden="true"></i>
   </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="src/scripts/config.js" defer></script>
+    <script src="src/scripts/storageAdapter.js" defer></script>
+        <script src="src/scripts/API.js" defer></script>
+    <script src="src/scripts/dashboard.js" defer></script>
   
 </body>
 </html>

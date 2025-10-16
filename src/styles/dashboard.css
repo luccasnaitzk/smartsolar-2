@@ -1281,6 +1281,8 @@ body[data-theme="light"] .btn-limpar:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .modal-content {
@@ -1571,35 +1573,40 @@ body {
 
 /* MINI SELEÇÃO DE PLACAS */
 .placa-mini-select {
-  background: var(--dark-card);
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  padding: 1rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-  animation: fadeIn 0.5s ease;
-}
-.placa-mini-item {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
-  padding: 0.6rem 1rem;
-  background: rgba(0,212,255,0.07);
-  border-radius: 8px;
-  font-weight: 500;
+  margin-top: 0.6rem;
+}
+
+/* Chips de seleção de placas */
+.placa-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.placa-chip {
+  background: rgba(0,212,255,0.10);
   color: var(--primary);
-  font-size: 1rem;
+  border: 1px solid rgba(0,212,255,0.35);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.3px;
 }
-.placa-mini-select .btn-primary {
-  align-self: flex-start;
-  margin-top: 0.5rem;
+.placa-chip:hover {
+  background: rgba(0,212,255,0.18);
+}
+.placa-chip.active {
+  background: rgba(0,212,255,0.28);
+  color: #0b1220;
+  border-color: #00d4ff;
 }
 }
 }
-body[data-theme="light"] .placa-mini-select {
-  background: var(--light-card);
-}
+/* light theme usa o mesmo container; chips já ajustam contraste */
 
 /* POTÊNCIA INSTANTÂNEA - VISUAL REDESIGN */
 .potencia-card {

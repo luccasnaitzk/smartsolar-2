@@ -21,6 +21,8 @@
     sim: { interval: null, lastTick: 0 },
     els: {},
     inited: false,
+    // Escopo de visualização: 'geral' ou uma placa específica
+    scope: { mode: 'geral', placa: null },
     clockInterval: null
   };
 
@@ -248,6 +250,33 @@
       tbody.appendChild(tr);
     });
   }
+
+  // Mini seletor de placas na própria dashboard (sem sair para a seção Placas)
+  function setScope(mode, placaName = null) {
+    SS.scope = { mode, placa: placaName };
+    // Realça seleção no mini seletor se estiver aberto
+    const wrap = SS.els.placaMiniSelect;
+    if (wrap) {
+      const chips = wrap.querySelectorAll('.placa-chip');
+      chips.forEach(chip => {
+        const type = chip.getAttribute('data-type');
+        const name = chip.getAttribute('data-name');
+        const active = (mode === 'geral' && type === 'geral') || (mode === 'placa' && type === 'placa' && name === placaName);
+        chip.classList.toggle('active', active);
+      });
+    }
+    const title = SS.els.pageTitle;
+    if (title) title.textContent = mode === 'geral' ? 'Dashboard — Geral' : `Dashboard — ${placaName}`;
+  }
+
+  function renderPlacaMiniSelect() {
+    const wrap = SS.els.placaMiniSelect;
+    if (!wrap) return;
+    // Requisito: não exibir a lista de placas abaixo do título
+    wrap.innerHTML = '';
+    wrap.style.display = 'none';
+    return;
+  }
   // Atualiza imediatamente componentes de análise após mudanças estruturais em placas
   function refreshAnalisesImmediate() {
     // análises removidas
@@ -255,7 +284,6 @@
   function bindPlacaTable() {
     const table = SS.els.placaTable;
     if (!table) return;
-    // Evita adicionar múltiplos listeners ao recriar tabela
     if (table._bound) return;
     table._bound = true;
     table.addEventListener('click', e => {
@@ -268,8 +296,8 @@
         ensurePanelState();
         renderPlacas();
         atualizarCards();
-        updatePlacasDoughnut();
-        refreshAnalisesImmediate();
+        if (typeof updatePlacasDoughnut === 'function') updatePlacasDoughnut();
+        syncPlacasRemoteDebounced();
       } else if (btn.classList.contains('btn-dup')) {
         const base = SS.placas[idx];
         if (!base) return;
@@ -282,8 +310,8 @@
         ensurePanelState();
         renderPlacas();
         atualizarCards();
-        updatePlacasDoughnut();
-        refreshAnalisesImmediate();
+        if (typeof updatePlacasDoughnut === 'function') updatePlacasDoughnut();
+        syncPlacasRemoteDebounced();
       } else if (btn.classList.contains('btn-edit')) {
         openEditPlacaModal(idx);
       }
@@ -344,8 +372,13 @@
 
   /* --------------------- KPIs --------------------- */
   function atualizarCards() {
-    const total = SS.placas.length;
-    const pot = SS.placas.reduce((s, p) => s + (p.potencia || 0), 0);
+    let total = SS.placas.length;
+    let pot = SS.placas.reduce((s, p) => s + (p.potencia || 0), 0);
+    if (SS.scope.mode === 'placa' && SS.scope.placa) {
+      total = 1;
+      const p = SS.placas.find(x => x.nome === SS.scope.placa);
+      pot = p ? (p.potencia || 0) : 0;
+    }
     if (SS.els.totalPlacas) SS.els.totalPlacas.textContent = total;
     if (SS.els.potenciaTotal) SS.els.potenciaTotal.textContent = pot.toFixed(2) + ' kWp';
     if (SS.els.economia) SS.els.economia.textContent = 'R$ ' + (pot * 20).toFixed(2);
@@ -552,8 +585,10 @@
       if (statusFactor>0.1 && st.powerKw>0.01) st.activeTicks++;
       st.tempC = (st.tempC||30) + (Math.random()-0.5)*0.4;
       st.eff = clamp01((st.eff||0.9) + (Math.random()-0.5)*0.01);
+      const panelLoad = st.powerKw * (0.7 + Math.random()*0.6);
+      st.loadKw = panelLoad;
       totalPower += st.powerKw;
-      totalLoad += st.powerKw * (0.7 + Math.random()*0.6);
+      totalLoad += panelLoad;
       // Eventos (gên. baixa)
       const expected = idealKw;
       if (expected>0.3 && st.powerKw < expected*0.4) {
@@ -569,13 +604,21 @@
     });
     SS.panelEvents = SS.panelEvents.slice(-300);
 
-    const power = totalPower;
-    const load = Math.max(0.5, totalLoad);
+    // Consolida métricas conforme escopo selecionado
+    let power = totalPower;
+    let load = Math.max(0.5, totalLoad);
+    let energy;
+    if (SS.scope.mode === 'placa' && SS.scope.placa) {
+      const st = SS.panelState[SS.scope.placa] || {};
+      power = st.powerKw || 0;
+      load = Math.max(0.1, st.loadKw || (power * 0.9));
+      energy = st.actualKwh || 0;
+    } else {
+      energy = SS.placas.reduce((s,p)=> s + (SS.panelState[p.nome]?.actualKwh||0), 0);
+    }
     updateGauge(power);
     if (SS.els.powerNow) SS.els.powerNow.textContent = power.toFixed(1) + ' kW';
     if (SS.els.loadNow) SS.els.loadNow.textContent = load.toFixed(1) + ' kW';
-
-    const energy = SS.placas.reduce((s,p)=> s + (SS.panelState[p.nome]?.actualKwh||0), 0);
     if (SS.els.energyToday) SS.els.energyToday.textContent = energy.toFixed(1) + ' kWh';
     const rev = energy * 0.95;
     if (SS.els.revenueToday) SS.els.revenueToday.textContent = 'R$ ' + rev.toFixed(2);
@@ -589,10 +632,10 @@
     atualizarCards();
 
     // KPIs spark
-    pushSpark('spark-powerNow', power);
-    pushSpark('spark-loadNow', load);
-    pushSpark('spark-energyToday', energy);
-    pushSpark('spark-revenueToday', rev);
+  pushSpark('spark-powerNow', power);
+  pushSpark('spark-loadNow', load);
+  pushSpark('spark-energyToday', energy);
+  pushSpark('spark-revenueToday', rev);
 
     // Charts principais
     if (SS.charts.realtime) {
@@ -1037,57 +1080,100 @@
 
   /* --------------------- VIEW TOGGLE (Dashboard / Placas) --------------------- */
   function bindToggleView() {
-    const { toggleView, sectionDashboard, sectionPlacas, pageTitle } = SS.els;
-    if (!toggleView || !sectionDashboard || !sectionPlacas) return;
-    let showingPlacas = false;
-    sectionPlacas.hidden = true;
-    toggleView.addEventListener('click', () => {
-      showingPlacas = !showingPlacas;
-      sectionDashboard.hidden = showingPlacas;
-      sectionPlacas.hidden = !showingPlacas;
-      if (pageTitle) pageTitle.textContent = showingPlacas ? 'Placas' : 'Dashboard';
-    });
+    const toggleView = SS.els.toggleView;
+    const mini = SS.els.placaMiniSelect || $('placaMiniSelect');
+    if (mini) mini.style.display = 'none';
+    // Mantém a seta visível, porém sem funcionalidade
+    if (toggleView) {
+      toggleView.style.display = '';
+      toggleView.style.pointerEvents = 'none';
+      toggleView.style.opacity = '0.85';
+      toggleView.setAttribute('aria-disabled', 'true');
+      // Remove qualquer handler anterior (defensivo)
+      toggleView.replaceWith(toggleView.cloneNode(true));
+      SS.els.toggleView = document.getElementById('toggleView');
+    }
   }
 
   /* --------------------- INIT --------------------- */
   function init() {
-    if (SS.inited) return;
-    SS.inited = true;
+  if (SS.inited) return;
+  SS.inited = true;
 
-    cacheElements();
-    initPlacasDefault();
-    ensurePanelState();
-    if (!SS.panelEvents.length) SS.panelEvents.push({ time: Date.now(), tipo:'sistema', sev:'baixa', desc:'Monitor iniciado' });
+  cacheElements();
+  initPlacasDefault();
+  ensurePanelState();
+  if (!SS.panelEvents.length) SS.panelEvents.push({ time: Date.now(), tipo:'sistema', sev:'baixa', desc:'Monitor iniciado' });
 
-    initTheme();
-    initTabs();
-    bindForms();
-    bindSupport();
-    initProfile();
-    bindToggleView();
+  initTheme();
+  initTabs();
+  bindForms();
+  bindSupport();
+  initProfile();
+  bindToggleView();
   initClock();
 
-    renderPlacas();
+  renderPlacas();
   bindPlacaTable(); // Necessário para botões de Editar / Duplicar / Remover
-    atualizarCards();
-    renderAlertas();
-    updateSupportBadge();
-    updateUserList();
-    initCharts();
+  atualizarCards();
+
+  // Carrega e sincroniza com o Neon (se API estiver rodando)
+  loadPlacasFromRemoteIfAny();
+
+  renderAlertas();
+  updateSupportBadge();
+  updateUserList();
+  initCharts();
   seedInitialCharts();
-    updateAnalysisKPIs();
-    renderAnalysisHeatmap();
-    renderAnalysisRanking();
-    renderAnalysisTimeline();
 
-    // Ano
-    if (SS.els.year) SS.els.year.textContent = new Date().getFullYear();
+  updateAnalysisKPIs();
+  renderAnalysisHeatmap();
+  renderAnalysisRanking();
+  renderAnalysisTimeline();
 
-    startSimulation();
-  }
+  // Ano no rodapé
+  if (SS.els.year) SS.els.year.textContent = new Date().getFullYear();
+
+  startSimulation();
+}
 
   document.addEventListener('DOMContentLoaded', init);
 
   // Expose para debug opcional
   window.SmartSolar = SS;
+  // ...existing code...
+  function debounce(fn, ms = 400) {
+    let t;
+    return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+  }
+
+  async function loadPlacasFromRemoteIfAny() {
+    try {
+      const email = localStorage.getItem('userEmail') || '';
+      if (!window.SmartSolarStorage?.isRemote() || !email) return;
+      const remote = await window.SmartSolarStorage.fetchPlacas(email);
+      if (remote && remote.length) {
+        SS.placas = remote.map(p => ({ nome: p.nome, potencia: Number(p.potencia) || 0, status: p.status || 'ativa' }));
+        ensurePanelState();
+        renderPlacas();
+        atualizarCards();
+        if (typeof updatePlacasDoughnut === 'function') updatePlacasDoughnut();
+      }
+      const name = localStorage.getItem('userName') || 'Usuário';
+      window.SmartSolarStorage.ensureUser(email, name);
+    } catch (e) {
+      console.warn('Falha ao carregar placas remotas:', e.message);
+    }
+  }
+
+  const syncPlacasRemoteDebounced = debounce(async () => {
+    try {
+      const email = localStorage.getItem('userEmail') || '';
+      if (!window.SmartSolarStorage?.isRemote() || !email) return;
+      await window.SmartSolarStorage.syncPlacas(email, SS.placas);
+    } catch (e) {
+      console.warn('Falha ao sincronizar placas remotas:', e.message);
+    }
+  }, 600);
+
 })();

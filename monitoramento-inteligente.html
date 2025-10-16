@@ -29,74 +29,16 @@
             <li class="nav_item"><a href="index.html#sobre">Sobre</a></li>
             <li class="nav_item"><a href="#" class="open-ticket">Contato</a></li>
             <li class="nav_item auth-item">
-              <button class="login-btn" id="authBtn">
+              <a class="login-btn" href="auth.html">
                 <i class="fas fa-user"></i>
                 <span>Entrar</span>
-              </button>
+              </a>
             </li>
           </ul>
         </nav>
       </header>
 
-    <div class="auth-modal" id="authModal">
-      <div class="auth-container">
-        <div class="auth-header">
-          <h2>Acesse sua conta</h2>
-          <button class="auth-close" id="closeAuthModal">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="auth-tabs">
-          <div class="auth-tab active" data-tab="login">Entrar</div>
-          <div class="auth-tab" data-tab="register">Cadastrar</div>
-        </div>
-        <div class="auth-content">
-          <form class="auth-form active" id="loginForm">
-            <div class="form-group">
-              <label for="loginEmail">E-mail</label>
-              <input type="email" id="loginEmail" placeholder="Seu e-mail" required>
-            </div>
-            <div class="form-group">
-              <label for="loginPassword">Senha</label>
-              <input type="password" id="loginPassword" placeholder="Sua senha" required>
-            </div>
-            <div class="form-options">
-              <label class="checkbox">
-                <input type="checkbox" id="rememberMe">
-                <span>Lembrar-me</span>
-              </label>
-              <a href="#" class="forgot-password" id="forgotPassword">Esqueci a senha</a>
-            </div>
-            <button type="submit" class="btn btn-primary btn-full">Entrar</button>
-          </form>
-          <form class="auth-form" id="registerForm">
-            <div class="form-group">
-              <label for="registerName">Nome completo</label>
-              <input type="text" id="registerName" placeholder="Seu nome completo" required>
-            </div>
-            <div class="form-group">
-              <label for="registerEmail">E-mail</label>
-              <input type="email" id="registerEmail" placeholder="Seu e-mail" required>
-            </div>
-            <div class="form-group">
-              <label for="registerPassword">Senha</label>
-              <input type="password" id="registerPassword" placeholder="Crie uma senha" required>
-            </div>
-            <div class="form-group">
-              <label for="registerConfirmPassword">Confirmar senha</label>
-              <input type="password" id="registerConfirmPassword" placeholder="Confirme sua senha" required>
-            </div>
-            <div class="form-options">
-              <label class="checkbox">
-                <input type="checkbox" id="acceptTerms" required>
-                <span>Concordo com os <a href="#">termos de uso</a></span>
-              </label>
-            </div>
-            <button type="submit" class="btn btn-primary btn-full">Criar conta</button>
-          </form>
-        </div>
-      </div>
-    </div>
+
     
       <main>
         <section class="monitoring-hero">
