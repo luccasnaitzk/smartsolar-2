@@ -644,7 +644,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     setTimeout(() => location.href = 'dashboard.html', 1500);
                 } catch (err) {
                     setLoadingState(form, false, { loading: 'Entrando...', default: 'Entrar' });
-                    showMessage('Seu email ou senha estão incorretos, tente novament', 'error');
+                    showMessage('Seu email ou senha estão incorretos, tente novamente', 'error');
                 }
             }
         }, true);
